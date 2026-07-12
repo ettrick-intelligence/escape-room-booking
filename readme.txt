@@ -2,9 +2,9 @@
 Contributors: john_m_craig, cbsa
 Tags: escape room, booking, stripe, calendar, payments
 Requires at least: 6.0
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.1.8
+Stable tag: 1.1.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -127,7 +127,7 @@ The free version contains links to https://escaperoombookingpro.com for upgrade 
 
 == Changelog ==
 
-= 1.1.8 =
+= 1.1.9 =
 * Updated tested up to WordPress 6.9
 * Removed unused core file include in activator
 

@@ -4,8 +4,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 global $wpdb;
 $search = sanitize_text_field( wp_unslash( $_GET['s'] ?? '' ) );
-$t_customers = $wpdb->prefix . 'erb_customers';
-$t_bookings  = $wpdb->prefix . 'erb_bookings';
+$t_customers = esc_sql( $wpdb->prefix . 'erb_customers' );
+$t_bookings  = esc_sql( $wpdb->prefix . 'erb_bookings' );
 
 if ( $search ) {
     $s         = '%' . $wpdb->esc_like( $search ) . '%';
