@@ -43,6 +43,8 @@
             $('#erb-game-setup').val(30);
             $('#erb-game-notice').val(2);
             $('#erb-game-horizon').val('');
+            $('#erb-game-min-players').val(2);
+            $('#erb-game-max-players').val(8);
 
             if (id) {
                 // Load existing game data
@@ -57,6 +59,8 @@
                     $('#erb-game-horizon').val(game.booking_horizon_date || '');
                     $('#erb-game-description').val(game.description || '');
                     $('#erb-game-image').val(game.image_url || '');
+                    $('#erb-game-min-players').val(game.min_players || 2);
+                    $('#erb-game-max-players').val(game.max_players || 8);
                 });
             }
 
@@ -81,6 +85,8 @@
                 booking_horizon_date: $('#erb-game-horizon').val(),
                 description:          $('#erb-game-description').val(),
                 image_url:            $('#erb-game-image').val(),
+                min_players:          $('#erb-game-min-players').val(),
+                max_players:          $('#erb-game-max-players').val(),
             }, function () {
                 ERB.closeModal('erb-game-modal');
                 ERB.notice('Game saved.');
@@ -149,6 +155,15 @@
                 ERBGames.updatePerPerson(this);
             });
 
+            // Filter rows to min/max range
+            ERB.ajax('erb_get_game', { id: gameId }, function (game) {
+                var minP = parseInt(game.min_players, 10) || 2;
+                var maxP = parseInt(game.max_players, 10) || 8;
+                $('.erb-pricing-row').each(function () {
+                    var p = parseInt($(this).data('players'), 10);
+                    $(this).toggle(p >= minP && p <= maxP);
+                });
+
             // Load saved prices
             ERB.ajax('erb_get_game', { id: gameId }, function (game) {
                 if (!game.prices || !game.prices.length) return;
@@ -157,6 +172,7 @@
                     $input.val((pr.price_pence / 100).toFixed(2));
                     ERBGames.updatePerPerson($input[0]);
                 });
+            });
             });
 
             ERB.openModal('erb-pricing-modal');

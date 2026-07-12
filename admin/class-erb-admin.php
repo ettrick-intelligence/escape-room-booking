@@ -104,6 +104,8 @@ class ERB_Admin {
             'min_notice_hours'     => max( 0,  (int) ( $_POST['min_notice_hours'] ?? 2 ) ),
             'booking_horizon_date' => ! empty( $_POST['booking_horizon_date'] ) ? sanitize_text_field( wp_unslash( $_POST['booking_horizon_date'] ) ) : null,
             'status'               => in_array( $_POST['status'] ?? '', array( 'active','inactive' ) ) ? $_POST['status'] : 'active',
+            'min_players'          => max( 1, (int) ( $_POST['min_players'] ?? 2 ) ),
+            'max_players'          => min( 20, max( 1, (int) ( $_POST['max_players'] ?? 8 ) ) ),
         );
         if ( ! empty( $_POST['id'] ) ) $data['id'] = (int) $_POST['id'];
         $id = ERB_DB::upsert_game( $data );
@@ -156,10 +158,13 @@ class ERB_Admin {
         $game_id = (int) ( $_POST['game_id'] ?? 0 );
         if ( ! $game_id ) ERB_Helpers::json_error( 'Invalid game ID' );
         $prices = array();
+        $game        = ERB_DB::get_game( $game_id );
+        $min_players = $game ? (int) $game->min_players : 2;
+        $max_players = $game ? (int) $game->max_players : 8;
         foreach ( ( $_POST['prices'] ?? array() ) as $players => $price_pounds ) {
             $players     = (int) $players;
             $price_pence = (int) round( (float) $price_pounds * 100 );
-            if ( $players >= 2 && $players <= 8 && $price_pence > 0 ) $prices[ $players ] = $price_pence;
+            if ( $players >= $min_players && $players <= $max_players && $price_pence > 0 ) $prices[ $players ] = $price_pence;
         }
         ERB_DB::save_prices( $game_id, $prices );
         ERB_Helpers::json_success();

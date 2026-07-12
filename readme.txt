@@ -2,9 +2,9 @@
 Contributors: john_m_craig, cbsa
 Tags: escape room, booking, stripe, calendar, payments
 Requires at least: 6.0
-Tested up to: 6.7
+Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.1.7
+Stable tag: 1.1.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -126,6 +126,17 @@ The free version contains links to https://escaperoombookingpro.com for upgrade 
 7. Admin games setup screen
 
 == Changelog ==
+
+= 1.1.8 =
+* Updated tested up to WordPress 6.9
+* Removed unused core file include in activator
+
+= 1.1.7 =
+* Renamed plugin to Ettrick Escape Room Booking
+* Fixed PHP syntax error in customers view
+* Replaced inline scripts with wp_add_inline_script()
+* Sanitization improvements throughout
+* Text domain updated
 
 = 1.1.1 =
 * Improved 2-game limit UX — greyed button with inline notice

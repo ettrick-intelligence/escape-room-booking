@@ -226,6 +226,19 @@ $lite_at_limit   = defined( 'ERB_LITE' ) && $lite_game_count >= ERB_LITE_GAME_LI
 
         <div class="erb-form-row">
             <div class="erb-form-group">
+                <label><?php esc_html_e( 'Min Players', 'ettrick-escape-room-booking' ); ?></label>
+                <input type="number" id="erb-game-min-players" value="2" min="1" max="20">
+                <small style="color:#9ca3af;"><?php esc_html_e( 'Minimum players per booking.', 'ettrick-escape-room-booking' ); ?></small>
+            </div>
+            <div class="erb-form-group">
+                <label><?php esc_html_e( 'Max Players', 'ettrick-escape-room-booking' ); ?></label>
+                <input type="number" id="erb-game-max-players" value="8" min="1" max="20">
+                <small style="color:#9ca3af;"><?php esc_html_e( 'Maximum players per booking. Only these player counts appear in the pricing table and booking form.', 'ettrick-escape-room-booking' ); ?></small>
+            </div>
+        </div>
+
+        <div class="erb-form-row">
+            <div class="erb-form-group">
                 <label><?php esc_html_e( 'Min Booking Notice (hours)', 'ettrick-escape-room-booking' ); ?></label>
                 <input type="number" id="erb-game-notice" value="2" min="0" max="168">
                 <small style="color:#9ca3af;"><?php esc_html_e( 'Slots within this many hours of now will be unavailable.', 'ettrick-escape-room-booking' ); ?></small>
@@ -319,7 +332,7 @@ $lite_at_limit   = defined( 'ERB_LITE' ) && $lite_game_count >= ERB_LITE_GAME_LI
             <?php for ( $p = 2; $p <= 8; $p++ ) :
                 $defaults = array( 2=>65, 3=>87, 4=>105, 5=>120, 6=>132, 7=>140, 8=>150 );
             ?>
-                <tr>
+                <tr class="erb-pricing-row" data-players="<?php echo absint( $p ); ?>">
                     <td style="text-align:center;font-weight:700;font-size:1rem;"><?php echo absint( $p ); ?></td>
                     <td>
                         <div style="display:flex;align-items:center;gap:.3rem;">
@@ -348,23 +361,23 @@ $lite_at_limit   = defined( 'ERB_LITE' ) && $lite_game_count >= ERB_LITE_GAME_LI
         </div>
     </div>
 </div>
-<script>
-(function($){
+<?php
+wp_add_inline_script( 'erb-games', '(function($){
     window.ERBGamesLite = {
         addGameClick: function(btn) {
-            if (btn.dataset.atLimit === '1') {
-                if ($('#erb-lite-limit-notice').length) return;
-                var $notice = $('<div id="erb-lite-limit-notice" style="' +
-                    'background:#fff3ec;border:1px solid rgba(232,98,26,.4);border-radius:8px;' +
-                    'padding:12px 16px;margin-bottom:1rem;font-size:.9rem;color:#92400e;' +
-                    'display:flex;align-items:center;justify-content:space-between;gap:1rem;">' +
-                    '<span>&#x1F513; You have reached the 2-game limit of the free version.</span>' +
-                    '<a href="' + btn.dataset.upgradeUrl + '" ' +
-                    'style="background:#e8621a;color:#fff;padding:7px 16px;border-radius:6px;' +
-                    'text-decoration:none;font-weight:600;font-size:.85rem;white-space:nowrap;">' +
-                    '&#x1F680; Upgrade to Pro</a>' +
-                    '</div>');
-                $('.erb-card').first().prepend($notice);
+            if (btn.dataset.atLimit === "1") {
+                if ($("#erb-lite-limit-notice").length) return;
+                var $notice = $("<div id=\"erb-lite-limit-notice\" style=\"" +
+                    "background:#fff3ec;border:1px solid rgba(232,98,26,.4);border-radius:8px;" +
+                    "padding:12px 16px;margin-bottom:1rem;font-size:.9rem;color:#92400e;" +
+                    "display:flex;align-items:center;justify-content:space-between;gap:1rem;\">" +
+                    "<span>&#x1F513; You have reached the 2-game limit of the free version.</span>" +
+                    "<a href=\"" + btn.dataset.upgradeUrl + "\" " +
+                    "style=\"background:#e8621a;color:#fff;padding:7px 16px;border-radius:6px;" +
+                    "text-decoration:none;font-weight:600;font-size:.85rem;white-space:nowrap;\">" +
+                    "&#x1F680; Upgrade to Pro</a>" +
+                    "</div>");
+                $(".erb-card").first().prepend($notice);
                 $notice.hide().slideDown(200);
                 setTimeout(function(){ $notice.slideUp(300, function(){ $(this).remove(); }); }, 6000);
                 return;
@@ -372,5 +385,5 @@ $lite_at_limit   = defined( 'ERB_LITE' ) && $lite_game_count >= ERB_LITE_GAME_LI
             ERBGames.openGameModal();
         }
     };
-})(jQuery);
-</script>
+})(jQuery);' );
+?>

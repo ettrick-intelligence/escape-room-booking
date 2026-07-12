@@ -64,8 +64,6 @@ class ERB_Activator {
     private static function create_tables() {
         global $wpdb;
         $charset = $wpdb->get_charset_collate();
-        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-
         // ── rooms ─────────────────────────────────────────────────────────────
         // Physical rooms. Two games can share one room.
         $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching

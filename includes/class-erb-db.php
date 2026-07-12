@@ -24,6 +24,22 @@ class ERB_DB {
 
     // ─── Games ────────────────────────────────────────────────────────────────
 
+
+    /**
+     * Add min_players / max_players columns if missing (upgrade migration).
+     */
+    public static function maybe_add_player_columns() {
+        global $wpdb;
+        $table = $wpdb->prefix . 'erb_games';
+        $cols  = $wpdb->get_col( "DESCRIBE {$table}", 0 );
+        if ( ! in_array( 'min_players', $cols, true ) ) {
+            $wpdb->query( "ALTER TABLE {$table} ADD COLUMN min_players TINYINT UNSIGNED NOT NULL DEFAULT 2 AFTER setup_minutes" );
+        }
+        if ( ! in_array( 'max_players', $cols, true ) ) {
+            $wpdb->query( "ALTER TABLE {$table} ADD COLUMN max_players TINYINT UNSIGNED NOT NULL DEFAULT 8 AFTER min_players" );
+        }
+    }
+
     public static function get_games( $active_only = true ) {
         $db     = self::db();
         $table_games = self::table('games');
