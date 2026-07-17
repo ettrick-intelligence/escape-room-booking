@@ -123,6 +123,7 @@ class ERB_Admin {
 
     public function ajax_get_game() {
         ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) ERB_Helpers::json_error( 'Unauthorised', 403 );
         $id = (int) ( $_POST['id'] ?? 0 );
         $game = ERB_DB::get_game( $id );
         if ( ! $game ) ERB_Helpers::json_error( 'Not found', 404 );
@@ -199,12 +200,28 @@ class ERB_Admin {
 
     // ─── AJAX: Blocked slots (admin calendar management) ─────────────────────
 
-    public function ajax_block_slot()        { ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' ); ERB_Helpers::json_success(); }
-    public function ajax_unblock_slot()      { ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' ); ERB_Helpers::json_success(); }
+    public function ajax_block_slot() {
+        ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) ERB_Helpers::json_error( 'Unauthorised', 403 );
+        ERB_Helpers::json_success();
+    }
+    public function ajax_unblock_slot() {
+        ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) ERB_Helpers::json_error( 'Unauthorised', 403 );
+        ERB_Helpers::json_success();
+    }
     public function ajax_save_promo()        { ERB_Helpers::json_error( 'Pro feature.' ); }
     public function ajax_delete_promo()      { ERB_Helpers::json_error( 'Pro feature.' ); }
     public function ajax_save_gamekeeper()   { ERB_Helpers::json_error( 'Pro feature.' ); }
     public function ajax_delete_gamekeeper() { ERB_Helpers::json_error( 'Pro feature.' ); }
-    public function ajax_get_bookings()      { ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' ); ERB_Helpers::json_success( ERB_DB::get_bookings() ); }
-    public function ajax_update_booking()    { ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' ); ERB_Helpers::json_success(); }
+    public function ajax_get_bookings() {
+        ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) ERB_Helpers::json_error( 'Unauthorised', 403 );
+        ERB_Helpers::json_success( ERB_DB::get_bookings() );
+    }
+    public function ajax_update_booking() {
+        ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) ERB_Helpers::json_error( 'Unauthorised', 403 );
+        ERB_Helpers::json_success();
+    }
 }

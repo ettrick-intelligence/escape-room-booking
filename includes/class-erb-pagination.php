@@ -51,14 +51,15 @@ class ERB_Pagination {
     public function render( string $base_url = '' ): string {
         if ( $this->total === 0 ) return '';
 
-        $base_url  = $base_url ?: ( $_SERVER['REQUEST_URI'] ?? '' );
+        $base_url  = $base_url ?: sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) );
         $per_page  = $this->per_page;
         $cur       = $this->current_page;
         $total     = $this->total_pages;
 
         $url = function( int $page ) use ( $base_url, $per_page ): string {
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             $params = array_merge(
-                $_GET ?? [],
+                array_map( 'sanitize_text_field', wp_unslash( $_GET ?? [] ) ),
                 [ 'paged' => $page, 'per_page' => $per_page ]
             );
             $base = strtok( $base_url, '?' );
@@ -66,7 +67,8 @@ class ERB_Pagination {
         };
 
         $size_url = function( int $size ) use ( $base_url ): string {
-            $params = array_merge( $_GET ?? [], [ 'paged' => 1, 'per_page' => $size ] );
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            $params = array_merge( array_map( 'sanitize_text_field', wp_unslash( $_GET ?? [] ) ), [ 'paged' => 1, 'per_page' => $size ] );
             $base = strtok( $base_url, '?' );
             return esc_url( $base . '?' . http_build_query( $params ) );
         };

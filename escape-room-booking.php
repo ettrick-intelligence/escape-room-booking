@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: Ettrick Escape Room Booking
- * Plugin URI:  https://ettrickintelligence.com/escape-room-booking
+ * Plugin URI:  https://escaperoombookingpro.com
  * Description: A complete booking system for escape room venues. Manage games, take bookings and collect payments via Stripe — all from your own WordPress website. Upgrade to Pro for unlimited games, promo codes, reports and more.
- * Version:     1.1.9
+ * Version:     1.2.0
  * Author:      Ettrick Intelligence
  * Author URI:  https://ettrickintelligence.com
  * License:     GPL-2.0+
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-define( 'ERB_VERSION',     '1.1.9' );
+define( 'ERB_VERSION',     '1.2.0' );
 define( 'ERB_LITE',        true );  // Lite version flag
 
 define( 'ERB_PLUGIN_FILE', __FILE__ );
