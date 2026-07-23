@@ -1,15 +1,15 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-define( 'ERB_LITE_GAME_LIMIT', 2 );
-$lite_game_count = count( ERB_DB::get_games( false ) );
-$lite_at_limit   = defined( 'ERB_LITE' ) && $lite_game_count >= ERB_LITE_GAME_LIMIT;
+define( 'EERB_LITE_GAME_LIMIT', 2 );
+$lite_game_count = count( EERB_DB::get_games( false ) );
+$lite_at_limit   = defined( 'EERB_LITE' ) && $lite_game_count >= EERB_LITE_GAME_LIMIT;
 ?>
 <div class="wrap erb-admin-page">
     <h1><?php esc_html_e( 'Games & Rooms', 'ettrick-escape-room-booking' ); ?></h1>
 
     <?php
-    $rooms = ERB_DB::get_rooms();
-    $games = ERB_DB::get_games( false );
+    $rooms = EERB_DB::get_rooms();
+    $games = EERB_DB::get_games( false );
     ?>
 
     <!-- ── Rooms ──────────────────────────────────────────────────────────── -->
@@ -17,7 +17,7 @@ $lite_at_limit   = defined( 'ERB_LITE' ) && $lite_game_count >= ERB_LITE_GAME_LI
         <h2>
             <?php esc_html_e( 'Physical Rooms', 'ettrick-escape-room-booking' ); ?>
             <button class="erb-btn erb-btn--primary erb-btn--sm" style="float:right;"
-                    onclick="ERBGames.openRoomModal()">
+                    onclick="EERBGames.openRoomModal()">
                 + <?php esc_html_e( 'Add Room', 'ettrick-escape-room-booking' ); ?>
             </button>
         </h2>
@@ -56,12 +56,12 @@ $lite_at_limit   = defined( 'ERB_LITE' ) && $lite_game_count >= ERB_LITE_GAME_LI
                     </td>
                     <td>
                         <button class="erb-btn erb-btn--outline erb-btn--sm"
-                                onclick="ERBGames.openRoomModal(<?php echo (int) $room->id; ?>, <?php echo esc_attr( json_encode( array( 'name' => $room->name, 'description' => $room->description ) ) ); ?>)">
+                                onclick="EERBGames.openRoomModal(<?php echo (int) $room->id; ?>, <?php echo esc_attr( json_encode( array( 'name' => $room->name, 'description' => $room->description ) ) ); ?>)">
                             <?php esc_html_e( 'Edit', 'ettrick-escape-room-booking' ); ?>
                         </button>
                         <?php if ( empty( $room_games ) ) : ?>
                         <button class="erb-btn erb-btn--danger erb-btn--sm erb-delete"
-                                data-action="erb_delete_room"
+                                data-action="eerb_delete_room"
                                 data-id="<?php echo (int) $room->id; ?>"
                                 data-label="<?php echo esc_attr( $room->name ); ?>">
                             <?php esc_html_e( 'Delete', 'ettrick-escape-room-booking' ); ?>
@@ -83,8 +83,8 @@ $lite_at_limit   = defined( 'ERB_LITE' ) && $lite_game_count >= ERB_LITE_GAME_LI
             <button class="erb-btn erb-btn--primary erb-btn--sm"
                     style="float:right;<?php echo $lite_at_limit ? 'opacity:.5;cursor:not-allowed;' : ''; ?>"
                     data-at-limit="<?php echo $lite_at_limit ? '1' : '0'; ?>"
-                    data-upgrade-url="<?php echo esc_url( admin_url( 'admin.php?page=erb-upgrade' ) ); ?>"
-                    onclick="ERBGamesLite.addGameClick(this)">
+                    data-upgrade-url="<?php echo esc_url( admin_url( 'admin.php?page=eerb-upgrade' ) ); ?>"
+                    onclick="EERBGamesLite.addGameClick(this)">
                 + <?php esc_html_e( 'Add Game', 'ettrick-escape-room-booking' ); ?>
             </button>
             <?php else : ?>
@@ -125,19 +125,19 @@ $lite_at_limit   = defined( 'ERB_LITE' ) && $lite_game_count >= ERB_LITE_GAME_LI
                     <td><span class="erb-badge erb-badge--<?php echo $game->status === 'active' ? 'confirmed' : 'cancelled'; ?>"><?php echo esc_html( $game->status ); ?></span></td>
                     <td style="white-space:nowrap;">
                         <button class="erb-btn erb-btn--outline erb-btn--sm"
-                                onclick="ERBGames.openGameModal(<?php echo (int) $game->id; ?>)">
+                                onclick="EERBGames.openGameModal(<?php echo (int) $game->id; ?>)">
                             <?php esc_html_e( 'Edit', 'ettrick-escape-room-booking' ); ?>
                         </button>
                         <button class="erb-btn erb-btn--outline erb-btn--sm"
-                                onclick="ERBGames.openHoursModal(<?php echo (int) $game->id; ?>, <?php echo esc_attr( json_encode( $game->name ) ); ?>)">
+                                onclick="EERBGames.openHoursModal(<?php echo (int) $game->id; ?>, <?php echo esc_attr( json_encode( $game->name ) ); ?>)">
                             <?php esc_html_e( 'Hours', 'ettrick-escape-room-booking' ); ?>
                         </button>
                         <button class="erb-btn erb-btn--outline erb-btn--sm"
-                                onclick="ERBGames.openPricingModal(<?php echo (int) $game->id; ?>, <?php echo esc_attr( json_encode( $game->name ) ); ?>)">
+                                onclick="EERBGames.openPricingModal(<?php echo (int) $game->id; ?>, <?php echo esc_attr( json_encode( $game->name ) ); ?>)">
                             <?php esc_html_e( 'Pricing', 'ettrick-escape-room-booking' ); ?>
                         </button>
                         <button class="erb-btn erb-btn--danger erb-btn--sm erb-delete"
-                                data-action="erb_delete_game"
+                                data-action="eerb_delete_game"
                                 data-id="<?php echo (int) $game->id; ?>"
                                 data-label="<?php echo esc_attr( $game->name ); ?>">
                             <?php esc_html_e( 'Delete', 'ettrick-escape-room-booking' ); ?>
@@ -169,7 +169,7 @@ $lite_at_limit   = defined( 'ERB_LITE' ) && $lite_game_count >= ERB_LITE_GAME_LI
             <button class="erb-btn erb-btn--outline erb-btn--auto" onclick="ERB.closeModal('erb-room-modal')">
                 <?php esc_html_e( 'Cancel', 'ettrick-escape-room-booking' ); ?>
             </button>
-            <button class="erb-btn erb-btn--primary erb-btn--auto" onclick="ERBGames.saveRoom()">
+            <button class="erb-btn erb-btn--primary erb-btn--auto" onclick="EERBGames.saveRoom()">
                 <?php esc_html_e( 'Save Room', 'ettrick-escape-room-booking' ); ?>
             </button>
         </div>
@@ -264,7 +264,7 @@ $lite_at_limit   = defined( 'ERB_LITE' ) && $lite_game_count >= ERB_LITE_GAME_LI
             <button class="erb-btn erb-btn--outline erb-btn--auto" onclick="ERB.closeModal('erb-game-modal')">
                 <?php esc_html_e( 'Cancel', 'ettrick-escape-room-booking' ); ?>
             </button>
-            <button class="erb-btn erb-btn--primary erb-btn--auto" onclick="ERBGames.saveGame()">
+            <button class="erb-btn erb-btn--primary erb-btn--auto" onclick="EERBGames.saveGame()">
                 <?php esc_html_e( 'Save Game', 'ettrick-escape-room-booking' ); ?>
             </button>
         </div>
@@ -307,7 +307,7 @@ $lite_at_limit   = defined( 'ERB_LITE' ) && $lite_game_count >= ERB_LITE_GAME_LI
             <button class="erb-btn erb-btn--outline erb-btn--auto" onclick="ERB.closeModal('erb-hours-modal')">
                 <?php esc_html_e( 'Cancel', 'ettrick-escape-room-booking' ); ?>
             </button>
-            <button class="erb-btn erb-btn--primary erb-btn--auto" onclick="ERBGames.saveHours()">
+            <button class="erb-btn erb-btn--primary erb-btn--auto" onclick="EERBGames.saveHours()">
                 <?php esc_html_e( 'Save Hours', 'ettrick-escape-room-booking' ); ?>
             </button>
         </div>
@@ -340,7 +340,7 @@ $lite_at_limit   = defined( 'ERB_LITE' ) && $lite_game_count >= ERB_LITE_GAME_LI
                             <input type="number" class="erb-price-input" data-players="<?php echo absint( $p ); ?>"
                                    value="<?php echo esc_html( $defaults[$p] ); ?>" min="0" step="0.01"
                                    style="width:80px;padding:.3rem .5rem;border:1px solid #e5e7eb;border-radius:4px;"
-                                   oninput="ERBGames.updatePerPerson(this)">
+                                   oninput="EERBGames.updatePerPerson(this)">
                         </div>
                     </td>
                     <td class="erb-per-person-<?php echo absint( $p ); ?>" style="color:#6b7280;font-size:.85rem;">
@@ -355,15 +355,15 @@ $lite_at_limit   = defined( 'ERB_LITE' ) && $lite_game_count >= ERB_LITE_GAME_LI
             <button class="erb-btn erb-btn--outline erb-btn--auto" onclick="ERB.closeModal('erb-pricing-modal')">
                 <?php esc_html_e( 'Cancel', 'ettrick-escape-room-booking' ); ?>
             </button>
-            <button class="erb-btn erb-btn--primary erb-btn--auto" onclick="ERBGames.savePricing()">
+            <button class="erb-btn erb-btn--primary erb-btn--auto" onclick="EERBGames.savePricing()">
                 <?php esc_html_e( 'Save Pricing', 'ettrick-escape-room-booking' ); ?>
             </button>
         </div>
     </div>
 </div>
 <?php
-wp_add_inline_script( 'erb-games', '(function($){
-    window.ERBGamesLite = {
+wp_add_inline_script( 'eerb-games', '(function($){
+    window.EERBGamesLite = {
         addGameClick: function(btn) {
             if (btn.dataset.atLimit === "1") {
                 if ($("#erb-lite-limit-notice").length) return;
@@ -382,7 +382,7 @@ wp_add_inline_script( 'erb-games', '(function($){
                 setTimeout(function(){ $notice.slideUp(300, function(){ $(this).remove(); }); }, 6000);
                 return;
             }
-            ERBGames.openGameModal();
+            EERBGames.openGameModal();
         }
     };
 })(jQuery);' );

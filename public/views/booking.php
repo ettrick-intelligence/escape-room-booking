@@ -114,7 +114,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         <h2><?php esc_html_e( 'Payment', 'ettrick-escape-room-booking' ); ?></h2>
         <div class="erb-summary" id="erb-step3-summary"></div>
 
-        <?php if ( ! defined( 'ERB_LITE' ) ) : ?>
+        <?php if ( ! defined( 'EERB_LITE' ) ) : ?>
         <div class="erb-promo-row">
             <input type="text" id="erb-promo-code" placeholder="<?php esc_attr_e( 'Promo code', 'ettrick-escape-room-booking' ); ?>" style="text-transform:uppercase;">
             <button class="erb-btn erb-btn--outline erb-btn--auto" onclick="ERB.Booking.applyPromo()"><?php esc_html_e( 'Apply', 'ettrick-escape-room-booking' ); ?></button>
@@ -164,5 +164,5 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 </div>
 
 <?php
-// Game prices are passed to JS via erbPublic.gamesData in class-erb-public.php enqueue_assets()
+// Game prices are passed to JS via eerbPublic.gamesData in class-erb-public.php enqueue_assets()
 ?>

@@ -2,35 +2,35 @@
 <div class="wrap erb-admin-page">
     <h1><?php esc_html_e( 'Settings', 'ettrick-escape-room-booking' ); ?></h1>
 
-    <?php settings_errors( 'erb_settings_group' ); ?>
+    <?php settings_errors( 'eerb_settings_group' ); ?>
 
     <form method="post" action="options.php">
-        <?php settings_fields( 'erb_settings_group' ); ?>
+        <?php settings_fields( 'eerb_settings_group' ); ?>
 
         <div class="erb-card">
             <h2><?php esc_html_e( 'General', 'ettrick-escape-room-booking' ); ?></h2>
             <div class="erb-form-row">
                 <div class="erb-form-group">
                     <label><?php esc_html_e( 'Currency Code', 'ettrick-escape-room-booking' ); ?></label>
-                    <input type="text" name="erb_currency" value="<?php echo esc_attr( get_option( 'erb_currency', 'GBP' ) ); ?>" maxlength="3">
+                    <input type="text" name="eerb_currency" value="<?php echo esc_attr( get_option( 'eerb_currency', 'GBP' ) ); ?>" maxlength="3">
                 </div>
                 <div class="erb-form-group">
                     <label><?php esc_html_e( 'Currency Symbol', 'ettrick-escape-room-booking' ); ?></label>
-                    <input type="text" name="erb_currency_symbol" value="<?php echo esc_attr( get_option( 'erb_currency_symbol', '£' ) ); ?>" maxlength="5">
+                    <input type="text" name="eerb_currency_symbol" value="<?php echo esc_attr( get_option( 'eerb_currency_symbol', '£' ) ); ?>" maxlength="5">
                 </div>
                 <div class="erb-form-group">
                     <label><?php esc_html_e( 'Slot Hold (minutes)', 'ettrick-escape-room-booking' ); ?></label>
-                    <input type="number" name="erb_slot_hold_minutes" value="<?php echo (int) get_option( 'erb_slot_hold_minutes', 15 ); ?>" min="5" max="60">
+                    <input type="number" name="eerb_slot_hold_minutes" value="<?php echo (int) get_option( 'eerb_slot_hold_minutes', 15 ); ?>" min="5" max="60">
                 </div>
             </div>
             <div class="erb-form-row">
                 <div class="erb-form-group">
                     <label><?php esc_html_e( 'Available Slot Colour', 'ettrick-escape-room-booking' ); ?></label>
-                    <input type="color" name="erb_slot_available_color" value="<?php echo esc_attr( get_option( 'erb_slot_available_color', '#22c55e' ) ); ?>">
+                    <input type="color" name="eerb_slot_available_color" value="<?php echo esc_attr( get_option( 'eerb_slot_available_color', '#22c55e' ) ); ?>">
                 </div>
                 <div class="erb-form-group">
                     <label><?php esc_html_e( 'Booked Slot Colour', 'ettrick-escape-room-booking' ); ?></label>
-                    <input type="color" name="erb_slot_booked_color" value="<?php echo esc_attr( get_option( 'erb_slot_booked_color', '#ef4444' ) ); ?>">
+                    <input type="color" name="eerb_slot_booked_color" value="<?php echo esc_attr( get_option( 'eerb_slot_booked_color', '#ef4444' ) ); ?>">
                 </div>
             </div>
         </div>
@@ -40,15 +40,15 @@
             <div class="erb-form-row">
                 <div class="erb-form-group">
                     <label><?php esc_html_e( 'From Name', 'ettrick-escape-room-booking' ); ?></label>
-                    <input type="text" name="erb_email_from_name" value="<?php echo esc_attr( get_option( 'erb_email_from_name' ) ); ?>">
+                    <input type="text" name="eerb_email_from_name" value="<?php echo esc_attr( get_option( 'eerb_email_from_name' ) ); ?>">
                 </div>
                 <div class="erb-form-group">
                     <label><?php esc_html_e( 'From Email Address', 'ettrick-escape-room-booking' ); ?></label>
-                    <input type="email" name="erb_email_from_address" value="<?php echo esc_attr( get_option( 'erb_email_from_address' ) ); ?>">
+                    <input type="email" name="eerb_email_from_address" value="<?php echo esc_attr( get_option( 'eerb_email_from_address' ) ); ?>">
                 </div>
                 <div class="erb-form-group">
                     <label><?php esc_html_e( 'Admin Notification Email', 'ettrick-escape-room-booking' ); ?></label>
-                    <input type="email" name="erb_admin_email" value="<?php echo esc_attr( get_option( 'erb_admin_email' ) ); ?>">
+                    <input type="email" name="eerb_admin_email" value="<?php echo esc_attr( get_option( 'eerb_admin_email' ) ); ?>">
                 </div>
             </div>
         </div>
@@ -58,30 +58,30 @@
             <div class="erb-form-row">
                 <div class="erb-form-group">
                     <label><?php esc_html_e( 'Mode', 'ettrick-escape-room-booking' ); ?></label>
-                    <select name="erb_stripe_mode">
-                        <option value="test" <?php selected( get_option( 'erb_stripe_mode' ), 'test' ); ?>><?php esc_html_e( 'Test', 'ettrick-escape-room-booking' ); ?></option>
-                        <option value="live" <?php selected( get_option( 'erb_stripe_mode' ), 'live' ); ?>><?php esc_html_e( 'Live', 'ettrick-escape-room-booking' ); ?></option>
+                    <select name="eerb_stripe_mode">
+                        <option value="test" <?php selected( get_option( 'eerb_stripe_mode' ), 'test' ); ?>><?php esc_html_e( 'Test', 'ettrick-escape-room-booking' ); ?></option>
+                        <option value="live" <?php selected( get_option( 'eerb_stripe_mode' ), 'live' ); ?>><?php esc_html_e( 'Live', 'ettrick-escape-room-booking' ); ?></option>
                     </select>
                 </div>
             </div>
             <div class="erb-form-row">
                 <div class="erb-form-group">
                     <label><?php esc_html_e( 'Test Publishable Key', 'ettrick-escape-room-booking' ); ?></label>
-                    <input type="text" name="erb_stripe_test_pk" value="<?php echo esc_attr( get_option( 'erb_stripe_test_pk' ) ); ?>" placeholder="pk_test_...">
+                    <input type="text" name="eerb_stripe_test_pk" value="<?php echo esc_attr( get_option( 'eerb_stripe_test_pk' ) ); ?>" placeholder="pk_test_...">
                 </div>
                 <div class="erb-form-group">
                     <label><?php esc_html_e( 'Test Secret Key', 'ettrick-escape-room-booking' ); ?></label>
-                    <input type="password" name="erb_stripe_test_sk" value="<?php echo esc_attr( get_option( 'erb_stripe_test_sk' ) ); ?>" placeholder="sk_test_...">
+                    <input type="password" name="eerb_stripe_test_sk" value="<?php echo esc_attr( get_option( 'eerb_stripe_test_sk' ) ); ?>" placeholder="sk_test_...">
                 </div>
             </div>
             <div class="erb-form-row">
                 <div class="erb-form-group">
                     <label><?php esc_html_e( 'Live Publishable Key', 'ettrick-escape-room-booking' ); ?></label>
-                    <input type="text" name="erb_stripe_live_pk" value="<?php echo esc_attr( get_option( 'erb_stripe_live_pk' ) ); ?>" placeholder="pk_live_...">
+                    <input type="text" name="eerb_stripe_live_pk" value="<?php echo esc_attr( get_option( 'eerb_stripe_live_pk' ) ); ?>" placeholder="pk_live_...">
                 </div>
                 <div class="erb-form-group">
                     <label><?php esc_html_e( 'Live Secret Key', 'ettrick-escape-room-booking' ); ?></label>
-                    <input type="password" name="erb_stripe_live_sk" value="<?php echo esc_attr( get_option( 'erb_stripe_live_sk' ) ); ?>" placeholder="sk_live_...">
+                    <input type="password" name="eerb_stripe_live_sk" value="<?php echo esc_attr( get_option( 'eerb_stripe_live_sk' ) ); ?>" placeholder="sk_live_...">
                 </div>
             </div>
             <div class="erb-notice erb-notice--info" style="margin-bottom:1rem;">
@@ -94,7 +94,7 @@
                 <div class="erb-form-group" style="flex:3;">
                     <label><?php esc_html_e( 'Webhook Endpoint URL', 'ettrick-escape-room-booking' ); ?></label>
                     <div style="display:flex;align-items:center;gap:.5rem;">
-                        <input type="text" id="erb-webhook-url" value="<?php echo esc_attr( admin_url( 'admin-ajax.php?action=erb_stripe_webhook' ) ); ?>" readonly style="background:#f9fafb;color:#374151;">
+                        <input type="text" id="erb-webhook-url" value="<?php echo esc_attr( admin_url( 'admin-ajax.php?action=eerb_stripe_webhook' ) ); ?>" readonly style="background:#f9fafb;color:#374151;">
                         <button type="button" class="erb-btn erb-btn--outline erb-btn--sm erb-btn--auto"
                                 onclick="navigator.clipboard.writeText(document.getElementById('erb-webhook-url').value).then(function(){ this.textContent='Copied!'; }.bind(this))">
                             <?php esc_html_e( 'Copy', 'ettrick-escape-room-booking' ); ?>
@@ -105,7 +105,7 @@
             <div class="erb-form-row">
                 <div class="erb-form-group" style="flex:2;">
                     <label><?php esc_html_e( 'Webhook Signing Secret', 'ettrick-escape-room-booking' ); ?></label>
-                    <input type="password" name="erb_stripe_webhook_secret" value="<?php echo esc_attr( get_option( 'erb_stripe_webhook_secret' ) ); ?>" placeholder="whsec_...">
+                    <input type="password" name="eerb_stripe_webhook_secret" value="<?php echo esc_attr( get_option( 'eerb_stripe_webhook_secret' ) ); ?>" placeholder="whsec_...">
                     <small style="color:#9ca3af;"><?php esc_html_e( 'Found in Stripe Dashboard after creating the webhook endpoint.', 'ettrick-escape-room-booking' ); ?></small>
                 </div>
             </div>
@@ -113,25 +113,25 @@
 
         <div class="erb-card">
             <h2><?php esc_html_e( 'Pages', 'ettrick-escape-room-booking' ); ?></h2>
-            <p class="description"><?php esc_html_e( 'Set the URL of the page containing the [erb_booking] shortcode. Visitors are sent here after clicking an available slot.', 'ettrick-escape-room-booking' ); ?></p>
+            <p class="description"><?php esc_html_e( 'Set the URL of the page containing the [eerb_booking] shortcode. Visitors are sent here after clicking an available slot.', 'ettrick-escape-room-booking' ); ?></p>
             <div class="erb-form-row">
                 <div class="erb-form-group" style="flex:3;">
                     <label><?php esc_html_e( 'Booking Page URL', 'ettrick-escape-room-booking' ); ?></label>
-                    <input type="url" name="erb_booking_page_url" value="<?php echo esc_attr( get_option( 'erb_booking_page_url', '' ) ); ?>" placeholder="https://yoursite.com/book/">
-                    <small style="color:#9ca3af;"><?php esc_html_e( 'Page containing the [erb_booking] shortcode.', 'ettrick-escape-room-booking' ); ?></small>
+                    <input type="url" name="eerb_booking_page_url" value="<?php echo esc_attr( get_option( 'eerb_booking_page_url', '' ) ); ?>" placeholder="https://yoursite.com/book/">
+                    <small style="color:#9ca3af;"><?php esc_html_e( 'Page containing the [eerb_booking] shortcode.', 'ettrick-escape-room-booking' ); ?></small>
                 </div>
             </div>
             <div class="erb-form-row">
                 <div class="erb-form-group" style="flex:3;">
                     <label><?php esc_html_e( 'Calendar Home URL', 'ettrick-escape-room-booking' ); ?></label>
-                    <input type="url" name="erb_calendar_home_url" value="<?php echo esc_attr( get_option( 'erb_calendar_home_url', home_url( '/' ) ) ); ?>" placeholder="https://yoursite.com/escape-rooms/">
+                    <input type="url" name="eerb_calendar_home_url" value="<?php echo esc_attr( get_option( 'eerb_calendar_home_url', home_url( '/' ) ) ); ?>" placeholder="https://yoursite.com/escape-rooms/">
                     <small style="color:#9ca3af;"><?php esc_html_e( 'Where "Go to Calendar" and "Book Again" buttons link to. Usually your games listing page.', 'ettrick-escape-room-booking' ); ?></small>
                 </div>
             </div>
             <div class="erb-form-row">
                 <div class="erb-form-group">
                     <label><?php esc_html_e( 'Date Display Format', 'ettrick-escape-room-booking' ); ?></label>
-                    <input type="text" name="erb_date_format" value="<?php echo esc_attr( get_option( 'erb_date_format', 'j F Y' ) ); ?>" placeholder="j F Y">
+                    <input type="text" name="eerb_date_format" value="<?php echo esc_attr( get_option( 'eerb_date_format', 'j F Y' ) ); ?>" placeholder="j F Y">
                     <small style="color:#9ca3af;">
                         <?php esc_html_e( 'PHP date format used in booking pages and emails. Examples: j F Y = 27 March 2026 &nbsp;|&nbsp; d/m/Y = 27/03/2026 &nbsp;|&nbsp; F j, Y = March 27, 2026', 'ettrick-escape-room-booking' ); ?>
                     </small>
@@ -140,13 +140,13 @@
             <div class="erb-form-row">
                 <div class="erb-form-group" style="flex:3;">
                     <label><?php esc_html_e( 'Manage Booking Page URL', 'ettrick-escape-room-booking' ); ?></label>
-                    <input type="url" name="erb_manage_page_url" value="<?php echo esc_attr( get_option( 'erb_manage_page_url', '' ) ); ?>" placeholder="https://yoursite.com/manage-booking/">
-                    <small style="color:#9ca3af;"><?php esc_html_e( 'Page containing the [erb_manage_booking] shortcode. Links in confirmation emails point here.', 'ettrick-escape-room-booking' ); ?></small>
+                    <input type="url" name="eerb_manage_page_url" value="<?php echo esc_attr( get_option( 'eerb_manage_page_url', '' ) ); ?>" placeholder="https://yoursite.com/manage-booking/">
+                    <small style="color:#9ca3af;"><?php esc_html_e( 'Page containing the [eerb_manage_booking] shortcode. Links in confirmation emails point here.', 'ettrick-escape-room-booking' ); ?></small>
                 </div>
             </div>
         </div>
 
-        <?php if ( ! defined( 'ERB_LITE' ) ) : ?>
+        <?php if ( ! defined( 'EERB_LITE' ) ) : ?>
         <div class="erb-card">
             <h2><?php esc_html_e( 'Licence Server', 'ettrick-escape-room-booking' ); ?></h2>
             <p class="description"><?php esc_html_e( 'Set the API Secret to match the value in your licence server config.php. This ensures responses from your licence server are genuine.', 'ettrick-escape-room-booking' ); ?></p>

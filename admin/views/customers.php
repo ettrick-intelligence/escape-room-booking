@@ -4,8 +4,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 global $wpdb;
 $search = sanitize_text_field( wp_unslash( $_GET['s'] ?? '' ) );
-$t_customers = esc_sql( $wpdb->prefix . 'erb_customers' );
-$t_bookings  = esc_sql( $wpdb->prefix . 'erb_bookings' );
+$t_customers = esc_sql( $wpdb->prefix . 'eerb_customers' );
+$t_bookings  = esc_sql( $wpdb->prefix . 'eerb_bookings' );
 
 if ( $search ) {
     $s         = '%' . $wpdb->esc_like( $search ) . '%';
@@ -34,7 +34,7 @@ if ( $search ) {
 
     <div class="erb-card" style="margin-bottom:1rem;">
         <form method="get" action="" style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap;">
-            <input type="hidden" name="page" value="erb-customers">
+            <input type="hidden" name="page" value="eerb-customers">
             <div class="erb-form-group" style="min-width:220px;">
                 <label><?php esc_html_e( 'Search', 'ettrick-escape-room-booking' ); ?></label>
                 <input type="text" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="Name or email…">
@@ -46,7 +46,7 @@ if ( $search ) {
             <?php if ( $search ) : ?>
             <div class="erb-form-group" style="min-width:auto;">
                 <label>&nbsp;</label>
-                <a href="<?php echo esc_url( admin_url( 'admin.php?page=erb-customers' ) ); ?>" class="erb-btn erb-btn--outline erb-btn--auto"><?php esc_html_e( 'Clear', 'ettrick-escape-room-booking' ); ?></a>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=eerb-customers' ) ); ?>" class="erb-btn erb-btn--outline erb-btn--auto"><?php esc_html_e( 'Clear', 'ettrick-escape-room-booking' ); ?></a>
             </div>
             <?php endif; ?>
         </form>
@@ -82,8 +82,8 @@ if ( $search ) {
                         </span>
                     </td>
                     <td style="text-align:center;"><?php echo (int) $c->booking_count; ?></td>
-                    <td><?php echo $c->total_spent ? esc_html( ERB_Helpers::format_price( $c->total_spent ) ) : '—'; ?></td>
-                    <td><?php echo esc_html( date_i18n( get_option( 'erb_date_format', 'j F Y' ), strtotime( $c->created_at ) ) ); ?></td>
+                    <td><?php echo $c->total_spent ? esc_html( EERB_Helpers::format_price( $c->total_spent ) ) : '—'; ?></td>
+                    <td><?php echo esc_html( date_i18n( get_option( 'eerb_date_format', 'j F Y' ), strtotime( $c->created_at ) ) ); ?></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

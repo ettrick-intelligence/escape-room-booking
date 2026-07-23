@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Handles: booked slots, held slots, blocked slots, shared-room blocking,
  *          min notice, booking horizon, and operating hours.
  */
-class ERB_Slots {
+class EERB_Slots {
 
     /**
      * Returns a structured array of days → slots with availability status.
@@ -17,25 +17,25 @@ class ERB_Slots {
      * @return array
      */
     public static function get_availability( $game_id, $date_from, $date_to ) {
-        $game = ERB_DB::get_game( $game_id );
+        $game = EERB_DB::get_game( $game_id );
         if ( ! $game || $game->status !== 'active' ) return array();
 
         // Load all data we need for the date range in bulk
         $dt_from = $date_from . ' 00:00:00';
         $dt_to   = $date_to   . ' 23:59:59';
 
-        $hours_by_day   = self::index_hours( ERB_DB::get_game_hours( $game_id ) );
-        $booked         = self::index_datetimes( ERB_DB::get_booked_slots( $game_id, $dt_from, $dt_to ) );
-        $held           = self::index_datetimes( ERB_DB::get_held_slots(   $game_id, $dt_from, $dt_to ) );
-        $blocked        = self::index_datetimes( ERB_DB::get_blocked_slots( $game_id, $dt_from, $dt_to ) );
+        $hours_by_day   = self::index_hours( EERB_DB::get_game_hours( $game_id ) );
+        $booked         = self::index_datetimes( EERB_DB::get_booked_slots( $game_id, $dt_from, $dt_to ) );
+        $held           = self::index_datetimes( EERB_DB::get_held_slots(   $game_id, $dt_from, $dt_to ) );
+        $blocked        = self::index_datetimes( EERB_DB::get_blocked_slots( $game_id, $dt_from, $dt_to ) );
 
         // If this game shares a room, load the sibling's bookings/holds too
         $sibling_booked = array();
         $sibling_held   = array();
-        $sibling = ERB_DB::get_room_sibling( $game_id );
+        $sibling = EERB_DB::get_room_sibling( $game_id );
         if ( $sibling ) {
-            $sibling_booked = self::index_datetimes( ERB_DB::get_booked_slots( $sibling->id, $dt_from, $dt_to ) );
-            $sibling_held   = self::index_datetimes( ERB_DB::get_held_slots(   $sibling->id, $dt_from, $dt_to ) );
+            $sibling_booked = self::index_datetimes( EERB_DB::get_booked_slots( $sibling->id, $dt_from, $dt_to ) );
+            $sibling_held   = self::index_datetimes( EERB_DB::get_held_slots(   $sibling->id, $dt_from, $dt_to ) );
         }
 
         $now             = time();

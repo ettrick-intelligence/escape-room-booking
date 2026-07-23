@@ -5,11 +5,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Pagination helper for admin list screens.
  *
  * Usage:
- *   $pager = new ERB_Pagination( $total_rows, $per_page, $current_page );
- *   $bookings = ERB_DB::get_bookings( array_merge( $args, $pager->query_args() ) );
+ *   $pager = new EERB_Pagination( $total_rows, $per_page, $current_page );
+ *   $bookings = EERB_DB::get_bookings( array_merge( $args, $pager->query_args() ) );
  *   echo $pager->render();
  */
-class ERB_Pagination {
+class EERB_Pagination {
 
     const PAGE_SIZES = [ 10, 25, 50, 100 ];
     const DEFAULT_PER_PAGE = 25;
@@ -36,7 +36,7 @@ class ERB_Pagination {
     public function has_pages(): bool       { return $this->total_pages > 1; }
 
     /**
-     * Returns limit/offset args to pass to ERB_DB::get_bookings() etc.
+     * Returns limit/offset args to pass to EERB_DB::get_bookings() etc.
      */
     public function query_args(): array {
         return [

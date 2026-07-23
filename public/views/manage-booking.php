@@ -12,31 +12,31 @@ $token = sanitize_text_field(
 );
 // Strip any URL encoding that may have been double-encoded
 $token = rawurldecode( $token );
-$booking = $token ? ERB_DB::get_booking_by_token( $token ) : null;
-$action  = sanitize_text_field( $_GET['erb_manage'] ?? '' );
+$booking = $token ? EERB_DB::get_booking_by_token( $token ) : null;
+$action  = sanitize_text_field( $_GET['eerb_manage'] ?? '' );
 
 // Handle POST actions
 if ( $_SERVER['REQUEST_METHOD'] === 'POST' && $booking ) {
-    $post_action = sanitize_text_field( $_POST['erb_manage_action'] ?? '' );
-    check_admin_referer( 'erb_manage_' . $token );
+    $post_action = sanitize_text_field( $_POST['eerb_manage_action'] ?? '' );
+    check_admin_referer( 'eerb_manage_' . $token );
 
     if ( $post_action === 'cancel' && in_array( $booking->status, array( 'confirmed', 'changed' ) ) ) {
-        ERB_DB::update_booking( $booking->id, array(
+        EERB_DB::update_booking( $booking->id, array(
             'status'     => 'cancelled',
             'updated_at' => current_time( 'mysql' ),
         ) );
-        ERB_DB::add_booking_history( array(
+        EERB_DB::add_booking_history( array(
             'booking_id' => $booking->id,
             'action'     => 'cancelled',
             'changed_by' => 'customer',
             'created_at' => current_time( 'mysql' ),
         ) );
-        $emails  = new ERB_Emails();
-        $emails->send_cancellation( ERB_DB::get_booking( $booking->id ) );
+        $emails  = new EERB_Emails();
+        $emails->send_cancellation( EERB_DB::get_booking( $booking->id ) );
         // Redirect with a clean URL — no token — to prevent re-triggering on refresh
-        $manage_base = get_option( 'erb_manage_page_url', '' );
+        $manage_base = get_option( 'eerb_manage_page_url', '' );
         if ( empty( $manage_base ) ) $manage_base = get_permalink();
-        wp_safe_redirect( add_query_arg( 'erb_cancelled', '1', $manage_base ) );
+        wp_safe_redirect( add_query_arg( 'eerb_cancelled', '1', $manage_base ) );
         exit;
         exit;
     }
@@ -44,20 +44,20 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && $booking ) {
     // Re-read token from hidden field on POST (URL may not carry it)
     if ( ! empty( $_POST['_erb_token'] ) ) {
         $token   = sanitize_text_field( $_POST['_erb_token'] );
-        $booking = ERB_DB::get_booking_by_token( $token );
+        $booking = EERB_DB::get_booking_by_token( $token );
     }
 
     if ( $post_action === 'change_players' ) {
         $new_players = (int) ( $_POST['player_count'] ?? 0 );
-        $game        = ERB_DB::get_game( $booking->game_id );
+        $game        = EERB_DB::get_game( $booking->game_id );
         if ( $new_players >= $game->min_players && $new_players <= $game->max_players ) {
-            $new_price = ERB_DB::get_price( $booking->game_id, $new_players );
+            $new_price = EERB_DB::get_price( $booking->game_id, $new_players );
             if ( $new_price ) {
                 $old_players   = (int) $booking->player_count;
                 $old_price     = (int) $booking->total_pence;
                 $price_diff    = $new_price - $old_price; // positive = more to pay, negative = refund
 
-                ERB_DB::update_booking( $booking->id, array(
+                EERB_DB::update_booking( $booking->id, array(
                     'player_count'   => $new_players,
                     'price_pence'    => $new_price,
                     'total_pence'    => $new_price,
@@ -65,13 +65,13 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && $booking ) {
                     'status'         => 'changed',
                     'updated_at'     => current_time( 'mysql' ),
                 ) );
-                ERB_DB::add_booking_history( array(
+                EERB_DB::add_booking_history( array(
                     'booking_id'  => $booking->id,
                     'action'      => 'changed',
                     'changed_by'  => 'customer',
                     'old_players' => $old_players,
                     'new_players' => $new_players,
-                    'note'        => 'Price changed from ' . ERB_Helpers::format_price( $old_price ) . ' to ' . ERB_Helpers::format_price( $new_price ),
+                    'note'        => 'Price changed from ' . EERB_Helpers::format_price( $old_price ) . ' to ' . EERB_Helpers::format_price( $new_price ),
                     'created_at'  => current_time( 'mysql' ),
                 ) );
 
@@ -83,29 +83,29 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && $booking ) {
                     'price_diff'  => $price_diff,
                 );
 
-                $emails = new ERB_Emails();
-                $emails->send_change( ERB_DB::get_booking( $booking->id ), $change_data );
-                $booking = ERB_DB::get_booking_by_token( $token );
+                $emails = new EERB_Emails();
+                $emails->send_change( EERB_DB::get_booking( $booking->id ), $change_data );
+                $booking = EERB_DB::get_booking_by_token( $token );
                 $message = 'changed';
             }
         }
     }
 }
 
-$date  = $booking ? date_i18n( get_option( 'erb_date_format', 'j F Y' ), strtotime( $booking->slot_start ) ) : '';
+$date  = $booking ? date_i18n( get_option( 'eerb_date_format', 'j F Y' ), strtotime( $booking->slot_start ) ) : '';
 $time  = $booking ? date_i18n( 'H:i', strtotime( $booking->slot_start ) )                                : '';
-$total = $booking ? ERB_Helpers::format_price( $booking->total_pence )                                    : '';
+$total = $booking ? EERB_Helpers::format_price( $booking->total_pence )                                    : '';
 ?>
 <div class="erb-wrap">
 <div class="erb-booking-wrap">
 
-<?php if ( isset( $_GET['erb_cancelled'] ) && $_GET['erb_cancelled'] == '1' ) : ?>
+<?php if ( isset( $_GET['eerb_cancelled'] ) && $_GET['eerb_cancelled'] == '1' ) : ?>
     <div class="erb-booking-step">
         <div class="erb-result">
             <div class="erb-result__icon">✅</div>
             <h2><?php esc_html_e( 'Booking Cancelled', 'ettrick-escape-room-booking' ); ?></h2>
             <p style="font-size:16px;color:#6b7280;margin-bottom:24px;"><?php esc_html_e( 'Your booking has been cancelled and a confirmation email has been sent.', 'ettrick-escape-room-booking' ); ?></p>
-            <a href="<?php echo esc_url( ERB_Helpers::get_browse_url() ); ?>" class="erb-btn erb-btn--primary" style="display:inline-flex;width:auto;">
+            <a href="<?php echo esc_url( EERB_Helpers::get_browse_url() ); ?>" class="erb-btn erb-btn--primary" style="display:inline-flex;width:auto;">
                 <?php esc_html_e( 'Book Again', 'ettrick-escape-room-booking' ); ?>
             </a>
         </div>
@@ -126,7 +126,7 @@ $total = $booking ? ERB_Helpers::format_price( $booking->total_pence )          
             <div class="erb-result__icon">✅</div>
             <h2><?php esc_html_e( 'Booking Updated', 'ettrick-escape-room-booking' ); ?></h2>
             <p><?php esc_html_e( 'Your booking has been updated and a confirmation email has been sent.', 'ettrick-escape-room-booking' ); ?></p>
-            <a href="<?php echo esc_url( ERB_Helpers::manage_booking_url( $token ) ); ?>"
+            <a href="<?php echo esc_url( EERB_Helpers::manage_booking_url( $token ) ); ?>"
                class="erb-btn erb-btn--outline" style="margin-top:20px;display:inline-flex;width:auto;">
                 <?php esc_html_e( 'View My Booking', 'ettrick-escape-room-booking' ); ?>
             </a>
@@ -139,7 +139,7 @@ $total = $booking ? ERB_Helpers::format_price( $booking->total_pence )          
             <div class="erb-result__icon">❌</div>
             <h2><?php esc_html_e( 'Booking Cancelled', 'ettrick-escape-room-booking' ); ?></h2>
             <p><?php esc_html_e( 'This booking has already been cancelled.', 'ettrick-escape-room-booking' ); ?></p>
-            <a href="<?php echo esc_url( ERB_Helpers::get_browse_url() ); ?>" class="erb-btn erb-btn--primary" style="margin-top:20px;display:inline-flex;width:auto;">
+            <a href="<?php echo esc_url( EERB_Helpers::get_browse_url() ); ?>" class="erb-btn erb-btn--primary" style="margin-top:20px;display:inline-flex;width:auto;">
                 <?php esc_html_e( 'Make a New Booking', 'ettrick-escape-room-booking' ); ?>
             </a>
         </div>
@@ -178,19 +178,19 @@ $total = $booking ? ERB_Helpers::format_price( $booking->total_pence )          
         <div style="margin-bottom:24px;">
             <h3 style="font-size:18px;margin:0 0 12px;"><?php esc_html_e( 'Change Number of Players', 'ettrick-escape-room-booking' ); ?></h3>
             <form method="post">
-                <?php wp_nonce_field( 'erb_manage_' . $token ); ?>
+                <?php wp_nonce_field( 'eerb_manage_' . $token ); ?>
                 <input type="hidden" name="_erb_token" value="<?php echo esc_attr( $token ); ?>">
-                <input type="hidden" name="erb_manage_action" value="change_players">
+                <input type="hidden" name="eerb_manage_action" value="change_players">
                 <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
                     <select name="player_count" style="padding:10px 14px;border:1px solid #e5e7eb;border-radius:8px;font-size:16px;font-family:inherit;">
                         <?php
-                        $game = ERB_DB::get_game( $booking->game_id );
+                        $game = EERB_DB::get_game( $booking->game_id );
                         for ( $p = $game->min_players; $p <= $game->max_players; $p++ ) :
-                            $price = ERB_DB::get_price( $booking->game_id, $p );
+                            $price = EERB_DB::get_price( $booking->game_id, $p );
                         ?>
                         <option value="<?php echo absint( $p ); ?>" <?php selected( $booking->player_count, $p ); ?>>
                             <?php echo absint( $p ); ?> <?php esc_html_e( 'players', 'ettrick-escape-room-booking' ); ?>
-                            <?php if ( $price ) echo '&mdash; ' . esc_html( ERB_Helpers::format_price( $price ) ); ?>
+                            <?php if ( $price ) echo '&mdash; ' . esc_html( EERB_Helpers::format_price( $price ) ); ?>
                         </option>
                         <?php endfor; ?>
                     </select>
@@ -207,7 +207,7 @@ $total = $booking ? ERB_Helpers::format_price( $booking->total_pence )          
             <p style="font-size:15px;color:#6b7280;margin:0 0 12px;">
                 <?php esc_html_e( 'To change your date or time, cancel this booking and make a new one from the calendar.', 'ettrick-escape-room-booking' ); ?>
             </p>
-            <a href="<?php echo esc_url( ERB_Helpers::get_browse_url() ); ?>" class="erb-btn erb-btn--outline" style="width:auto;display:inline-flex;">
+            <a href="<?php echo esc_url( EERB_Helpers::get_browse_url() ); ?>" class="erb-btn erb-btn--outline" style="width:auto;display:inline-flex;">
                 <?php esc_html_e( 'Go to Calendar', 'ettrick-escape-room-booking' ); ?>
             </a>
         </div>
@@ -219,9 +219,9 @@ $total = $booking ? ERB_Helpers::format_price( $booking->total_pence )          
                 <?php esc_html_e( 'Cancellations are subject to our cancellation policy. Refunds are processed manually by our team.', 'ettrick-escape-room-booking' ); ?>
             </p>
             <form method="post" onsubmit="return confirm('Are you sure you want to cancel this booking? This cannot be undone.');">
-                <?php wp_nonce_field( 'erb_manage_' . $token ); ?>
+                <?php wp_nonce_field( 'eerb_manage_' . $token ); ?>
                 <input type="hidden" name="_erb_token" value="<?php echo esc_attr( $token ); ?>">
-                <input type="hidden" name="erb_manage_action" value="cancel">
+                <input type="hidden" name="eerb_manage_action" value="cancel">
                 <button type="submit" class="erb-btn erb-btn--danger" style="width:auto;display:inline-flex;">
                     <?php esc_html_e( 'Cancel My Booking', 'ettrick-escape-room-booking' ); ?>
                 </button>

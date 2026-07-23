@@ -2,30 +2,30 @@
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class ERB_Admin {
+class EERB_Admin {
 
     // ─── Admin Menu ───────────────────────────────────────────────────────────
 
     public function register_admin_menu() {
-        add_menu_page( __( 'Escape Room Booking', 'ettrick-escape-room-booking' ), __( 'Escape Rooms', 'ettrick-escape-room-booking' ), 'manage_options', 'erb-dashboard', array( $this, 'page_dashboard' ), 'dashicons-calendar-alt', 30 );
-        add_submenu_page( 'erb-dashboard', __( 'Dashboard',        'ettrick-escape-room-booking' ), __( 'Dashboard',              'ettrick-escape-room-booking' ), 'manage_options', 'erb-dashboard', array( $this, 'page_dashboard' ) );
-        add_submenu_page( 'erb-dashboard', __( 'Games',            'ettrick-escape-room-booking' ), __( 'Games',                  'ettrick-escape-room-booking' ), 'manage_options', 'erb-games',     array( $this, 'page_games' ) );
-        add_submenu_page( 'erb-dashboard', __( 'Bookings',         'ettrick-escape-room-booking' ), __( 'Bookings',               'ettrick-escape-room-booking' ), 'manage_options', 'erb-bookings',  array( $this, 'page_bookings' ) );
-        add_submenu_page( 'erb-dashboard', __( 'Customers',        'ettrick-escape-room-booking' ), __( 'Customers',              'ettrick-escape-room-booking' ), 'manage_options', 'erb-customers', array( $this, 'page_customers' ) );
-        add_submenu_page( 'erb-dashboard', __( 'Settings',         'ettrick-escape-room-booking' ), __( 'Settings',               'ettrick-escape-room-booking' ), 'manage_options', 'erb-settings',  array( $this, 'page_settings' ) );
-        add_submenu_page( 'erb-dashboard', __( 'Upgrade to Pro',   'ettrick-escape-room-booking' ), __( 'Upgrade to Pro &#x1F680;', 'ettrick-escape-room-booking' ), 'manage_options', 'erb-upgrade',   array( $this, 'page_upgrade' ) );
+        add_menu_page( __( 'Escape Room Booking', 'ettrick-escape-room-booking' ), __( 'Escape Rooms', 'ettrick-escape-room-booking' ), 'manage_options', 'eerb-dashboard', array( $this, 'page_dashboard' ), 'dashicons-calendar-alt', 30 );
+        add_submenu_page( 'eerb-dashboard', __( 'Dashboard',        'ettrick-escape-room-booking' ), __( 'Dashboard',              'ettrick-escape-room-booking' ), 'manage_options', 'eerb-dashboard', array( $this, 'page_dashboard' ) );
+        add_submenu_page( 'eerb-dashboard', __( 'Games',            'ettrick-escape-room-booking' ), __( 'Games',                  'ettrick-escape-room-booking' ), 'manage_options', 'eerb-games',     array( $this, 'page_games' ) );
+        add_submenu_page( 'eerb-dashboard', __( 'Bookings',         'ettrick-escape-room-booking' ), __( 'Bookings',               'ettrick-escape-room-booking' ), 'manage_options', 'eerb-bookings',  array( $this, 'page_bookings' ) );
+        add_submenu_page( 'eerb-dashboard', __( 'Customers',        'ettrick-escape-room-booking' ), __( 'Customers',              'ettrick-escape-room-booking' ), 'manage_options', 'eerb-customers', array( $this, 'page_customers' ) );
+        add_submenu_page( 'eerb-dashboard', __( 'Settings',         'ettrick-escape-room-booking' ), __( 'Settings',               'ettrick-escape-room-booking' ), 'manage_options', 'eerb-settings',  array( $this, 'page_settings' ) );
+        add_submenu_page( 'eerb-dashboard', __( 'Upgrade to Pro',   'ettrick-escape-room-booking' ), __( 'Upgrade to Pro &#x1F680;', 'ettrick-escape-room-booking' ), 'manage_options', 'eerb-upgrade',   array( $this, 'page_upgrade' ) );
     }
 
     // ─── Settings ─────────────────────────────────────────────────────────────
 
     public function register_settings() {
         foreach ( array(
-            'erb_currency','erb_currency_symbol','erb_slot_hold_minutes',
-            'erb_slot_available_color','erb_slot_booked_color','erb_stripe_mode',
-            'erb_stripe_test_pk','erb_stripe_test_sk','erb_stripe_live_pk','erb_stripe_live_sk',
-            'erb_stripe_webhook_secret','erb_admin_email','erb_email_from_name','erb_email_from_address','erb_booking_page_url','erb_manage_page_url','erb_calendar_home_url','erb_date_format',
+            'eerb_currency','eerb_currency_symbol','eerb_slot_hold_minutes',
+            'eerb_slot_available_color','eerb_slot_booked_color','eerb_stripe_mode',
+            'eerb_stripe_test_pk','eerb_stripe_test_sk','eerb_stripe_live_pk','eerb_stripe_live_sk',
+            'eerb_stripe_webhook_secret','eerb_admin_email','eerb_email_from_name','eerb_email_from_address','eerb_booking_page_url','eerb_manage_page_url','eerb_calendar_home_url','eerb_date_format',
         ) as $key ) {
-            register_setting( 'erb_settings_group', $key, array( 'sanitize_callback' => 'sanitize_text_field' ) );
+            register_setting( 'eerb_settings_group', $key, array( 'sanitize_callback' => 'sanitize_text_field' ) );
         }
     }
 
@@ -33,66 +33,66 @@ class ERB_Admin {
 
     public function enqueue_assets( $hook ) {
         if ( strpos( $hook, 'erb-' ) === false && $hook !== 'toplevel_page_erb-dashboard' ) return;
-        wp_enqueue_style(  'erb-admin', ERB_PLUGIN_URL . 'admin/css/erb-admin.css', array(), ERB_VERSION );
-        wp_enqueue_script( 'erb-admin', ERB_PLUGIN_URL . 'admin/js/erb-admin.js',  array( 'jquery' ), ERB_VERSION, true );
-        wp_localize_script( 'erb-admin', 'erbAdmin', array(
+        wp_enqueue_style(  'eerb-admin', EERB_PLUGIN_URL . 'admin/css/erb-admin.css', array(), EERB_VERSION );
+        wp_enqueue_script( 'eerb-admin', EERB_PLUGIN_URL . 'admin/js/erb-admin.js',  array( 'jquery' ), EERB_VERSION, true );
+        wp_localize_script( 'eerb-admin', 'eerbAdmin', array(
             'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
-            'nonce'          => wp_create_nonce( 'erb_admin_nonce' ),
-            'currencySymbol' => get_option( 'erb_currency_symbol', '£' ),
+            'nonce'          => wp_create_nonce( 'eerb_admin_nonce' ),
+            'currencySymbol' => get_option( 'eerb_currency_symbol', '£' ),
         ) );
-        if ( strpos( $hook, 'erb-games' ) !== false ) {
-            wp_enqueue_script( 'erb-games', ERB_PLUGIN_URL . 'admin/js/erb-games.js', array( 'erb-admin' ), ERB_VERSION, true );
+        if ( strpos( $hook, 'eerb-games' ) !== false ) {
+            wp_enqueue_script( 'eerb-games', EERB_PLUGIN_URL . 'admin/js/erb-games.js', array( 'eerb-admin' ), EERB_VERSION, true );
         }
     }
 
     // ─── Pages ────────────────────────────────────────────────────────────────
 
-    public function page_dashboard()   { include ERB_PLUGIN_DIR . 'admin/views/dashboard.php'; }
-    public function page_games()       { include ERB_PLUGIN_DIR . 'admin/views/games.php'; }
-    public function page_bookings()    { include ERB_PLUGIN_DIR . 'admin/views/bookings.php'; }
-    public function page_customers()   { include ERB_PLUGIN_DIR . 'admin/views/customers.php'; }
-    public function page_settings()    { include ERB_PLUGIN_DIR . 'admin/views/settings.php'; }
-    public function page_upgrade()     { include ERB_PLUGIN_DIR . 'admin/views/upgrade.php'; }
+    public function page_dashboard()   { include EERB_PLUGIN_DIR . 'admin/views/dashboard.php'; }
+    public function page_games()       { include EERB_PLUGIN_DIR . 'admin/views/games.php'; }
+    public function page_bookings()    { include EERB_PLUGIN_DIR . 'admin/views/bookings.php'; }
+    public function page_customers()   { include EERB_PLUGIN_DIR . 'admin/views/customers.php'; }
+    public function page_settings()    { include EERB_PLUGIN_DIR . 'admin/views/settings.php'; }
+    public function page_upgrade()     { include EERB_PLUGIN_DIR . 'admin/views/upgrade.php'; }
 
     // ─── AJAX: Rooms ──────────────────────────────────────────────────────────
 
     public function ajax_save_room() {
-        ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' );
-        if ( ! current_user_can( 'manage_options' ) ) ERB_Helpers::json_error( 'Unauthorised', 403 );
+        EERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'eerb_admin_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) EERB_Helpers::json_error( 'Unauthorised', 403 );
         $name = sanitize_text_field( wp_unslash( $_POST['name'] ) );
-        if ( empty( $name ) ) ERB_Helpers::json_error( __( 'Room name is required.', 'ettrick-escape-room-booking' ) );
+        if ( empty( $name ) ) EERB_Helpers::json_error( __( 'Room name is required.', 'ettrick-escape-room-booking' ) );
         $data = array( 'name' => $name, 'description' => sanitize_text_field( wp_unslash( $_POST['description'] ) ) );
         if ( ! empty( $_POST['id'] ) ) $data['id'] = (int) $_POST['id'];
-        $id = ERB_DB::upsert_room( $data );
-        ERB_Helpers::json_success( array( 'id' => $id ) );
+        $id = EERB_DB::upsert_room( $data );
+        EERB_Helpers::json_success( array( 'id' => $id ) );
     }
 
     public function ajax_delete_room() {
-        ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' );
-        if ( ! current_user_can( 'manage_options' ) ) ERB_Helpers::json_error( 'Unauthorised', 403 );
+        EERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'eerb_admin_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) EERB_Helpers::json_error( 'Unauthorised', 403 );
         $id = (int) ( $_POST['id'] ?? 0 );
-        if ( ! $id ) ERB_Helpers::json_error( 'Invalid ID' );
-        global $wpdb; $wpdb->delete( $wpdb->prefix . 'erb_rooms', array( 'id' => $id ) );
-        ERB_Helpers::json_success();
+        if ( ! $id ) EERB_Helpers::json_error( 'Invalid ID' );
+        global $wpdb; $wpdb->delete( $wpdb->prefix . 'eerb_rooms', array( 'id' => $id ) );
+        EERB_Helpers::json_success();
     }
 
     // ─── AJAX: Games ──────────────────────────────────────────────────────────
 
     public function ajax_save_game() {
-        ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' );
-        if ( ! current_user_can( 'manage_options' ) ) ERB_Helpers::json_error( 'Unauthorised', 403 );
+        EERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'eerb_admin_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) EERB_Helpers::json_error( 'Unauthorised', 403 );
         // Lite version: enforce 2-game limit
-        if ( defined( 'ERB_LITE' ) ) {
+        if ( defined( 'EERB_LITE' ) ) {
             global $wpdb;
-            $game_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}erb_games" );
-            $is_new     = empty( $_POST['id'] ) || ! ERB_DB::get_game( (int) $_POST['id'] );
+            $game_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}eerb_games" );
+            $is_new     = empty( $_POST['id'] ) || ! EERB_DB::get_game( (int) $_POST['id'] );
             if ( $is_new && $game_count >= 2 ) {
-                ERB_Helpers::json_error( 'You have reached the 2-game limit of the free version. Upgrade to Pro for unlimited games.' );
+                EERB_Helpers::json_error( 'You have reached the 2-game limit of the free version. Upgrade to Pro for unlimited games.' );
             }
         }
         $name = sanitize_text_field( wp_unslash( $_POST['name'] ) );
-        if ( empty( $name ) ) ERB_Helpers::json_error( __( 'Game name is required.', 'ettrick-escape-room-booking' ) );
-        if ( empty( $_POST['room_id'] ) ) ERB_Helpers::json_error( __( 'Please select a physical room.', 'ettrick-escape-room-booking' ) );
+        if ( empty( $name ) ) EERB_Helpers::json_error( __( 'Game name is required.', 'ettrick-escape-room-booking' ) );
+        if ( empty( $_POST['room_id'] ) ) EERB_Helpers::json_error( __( 'Please select a physical room.', 'ettrick-escape-room-booking' ) );
         $data = array(
             'room_id'              => (int) $_POST['room_id'],
             'name'                 => $name,
@@ -108,37 +108,37 @@ class ERB_Admin {
             'max_players'          => min( 20, max( 1, (int) ( $_POST['max_players'] ?? 8 ) ) ),
         );
         if ( ! empty( $_POST['id'] ) ) $data['id'] = (int) $_POST['id'];
-        $id = ERB_DB::upsert_game( $data );
-        ERB_Helpers::json_success( array( 'id' => $id ) );
+        $id = EERB_DB::upsert_game( $data );
+        EERB_Helpers::json_success( array( 'id' => $id ) );
     }
 
     public function ajax_delete_game() {
-        ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' );
-        if ( ! current_user_can( 'manage_options' ) ) ERB_Helpers::json_error( 'Unauthorised', 403 );
+        EERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'eerb_admin_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) EERB_Helpers::json_error( 'Unauthorised', 403 );
         $id = (int) ( $_POST['id'] ?? 0 );
-        if ( ! $id ) ERB_Helpers::json_error( 'Invalid ID' );
-        global $wpdb; $wpdb->delete( $wpdb->prefix . 'erb_games', array( 'id' => $id ) );
-        ERB_Helpers::json_success();
+        if ( ! $id ) EERB_Helpers::json_error( 'Invalid ID' );
+        global $wpdb; $wpdb->delete( $wpdb->prefix . 'eerb_games', array( 'id' => $id ) );
+        EERB_Helpers::json_success();
     }
 
     public function ajax_get_game() {
-        ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' );
-        if ( ! current_user_can( 'manage_options' ) ) ERB_Helpers::json_error( 'Unauthorised', 403 );
+        EERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'eerb_admin_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) EERB_Helpers::json_error( 'Unauthorised', 403 );
         $id = (int) ( $_POST['id'] ?? 0 );
-        $game = ERB_DB::get_game( $id );
-        if ( ! $game ) ERB_Helpers::json_error( 'Not found', 404 );
-        $game->hours  = ERB_DB::get_game_hours( $id );
-        $game->prices = ERB_DB::get_prices( $id );
-        ERB_Helpers::json_success( $game );
+        $game = EERB_DB::get_game( $id );
+        if ( ! $game ) EERB_Helpers::json_error( 'Not found', 404 );
+        $game->hours  = EERB_DB::get_game_hours( $id );
+        $game->prices = EERB_DB::get_prices( $id );
+        EERB_Helpers::json_success( $game );
     }
 
     // ─── AJAX: Hours ──────────────────────────────────────────────────────────
 
     public function ajax_save_hours() {
-        ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' );
-        if ( ! current_user_can( 'manage_options' ) ) ERB_Helpers::json_error( 'Unauthorised', 403 );
+        EERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'eerb_admin_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) EERB_Helpers::json_error( 'Unauthorised', 403 );
         $game_id = (int) ( $_POST['game_id'] ?? 0 );
-        if ( ! $game_id ) ERB_Helpers::json_error( 'Invalid game ID' );
+        if ( ! $game_id ) EERB_Helpers::json_error( 'Invalid game ID' );
         $hours = array();
         foreach ( ( $_POST['hours'] ?? array() ) as $day => $h ) {
             $hours[ (int) $day ] = array(
@@ -147,19 +147,19 @@ class ERB_Admin {
                 'is_closed'  => ! empty( $h['is_closed'] ) ? 1 : 0,
             );
         }
-        ERB_DB::save_game_hours( $game_id, $hours );
-        ERB_Helpers::json_success();
+        EERB_DB::save_game_hours( $game_id, $hours );
+        EERB_Helpers::json_success();
     }
 
     // ─── AJAX: Pricing ────────────────────────────────────────────────────────
 
     public function ajax_save_pricing() {
-        ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' );
-        if ( ! current_user_can( 'manage_options' ) ) ERB_Helpers::json_error( 'Unauthorised', 403 );
+        EERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'eerb_admin_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) EERB_Helpers::json_error( 'Unauthorised', 403 );
         $game_id = (int) ( $_POST['game_id'] ?? 0 );
-        if ( ! $game_id ) ERB_Helpers::json_error( 'Invalid game ID' );
+        if ( ! $game_id ) EERB_Helpers::json_error( 'Invalid game ID' );
         $prices = array();
-        $game        = ERB_DB::get_game( $game_id );
+        $game        = EERB_DB::get_game( $game_id );
         $min_players = $game ? (int) $game->min_players : 2;
         $max_players = $game ? (int) $game->max_players : 8;
         foreach ( ( $_POST['prices'] ?? array() ) as $players => $price_pounds ) {
@@ -167,61 +167,61 @@ class ERB_Admin {
             $price_pence = (int) round( (float) $price_pounds * 100 );
             if ( $players >= $min_players && $players <= $max_players && $price_pence > 0 ) $prices[ $players ] = $price_pence;
         }
-        ERB_DB::save_prices( $game_id, $prices );
-        ERB_Helpers::json_success();
+        EERB_DB::save_prices( $game_id, $prices );
+        EERB_Helpers::json_success();
     }
 
     // ─── AJAX: Bookings ──────────────────────────────────────────────────────────
 
     public function ajax_admin_get_booking() {
-        ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' );
-        if ( ! current_user_can( 'manage_options' ) ) ERB_Helpers::json_error( 'Unauthorised', 403 );
+        EERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'eerb_admin_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) EERB_Helpers::json_error( 'Unauthorised', 403 );
         $id      = (int) ( $_POST['id'] ?? 0 );
-        $booking = ERB_DB::get_booking( $id );
-        if ( ! $booking ) ERB_Helpers::json_error( 'Not found', 404 );
-        ERB_Helpers::json_success( $booking );
+        $booking = EERB_DB::get_booking( $id );
+        if ( ! $booking ) EERB_Helpers::json_error( 'Not found', 404 );
+        EERB_Helpers::json_success( $booking );
     }
 
     public function ajax_admin_cancel_booking() {
-        ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' );
-        if ( ! current_user_can( 'manage_options' ) ) ERB_Helpers::json_error( 'Unauthorised', 403 );
+        EERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'eerb_admin_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) EERB_Helpers::json_error( 'Unauthorised', 403 );
         $id      = (int) ( $_POST['id'] ?? 0 );
-        $booking = ERB_DB::get_booking( $id );
-        if ( ! $booking ) ERB_Helpers::json_error( 'Not found', 404 );
-        ERB_DB::update_booking( $id, array( 'status' => 'cancelled', 'updated_at' => current_time( 'mysql' ) ) );
-        ERB_DB::add_booking_history( array(
+        $booking = EERB_DB::get_booking( $id );
+        if ( ! $booking ) EERB_Helpers::json_error( 'Not found', 404 );
+        EERB_DB::update_booking( $id, array( 'status' => 'cancelled', 'updated_at' => current_time( 'mysql' ) ) );
+        EERB_DB::add_booking_history( array(
             'booking_id' => $id, 'action' => 'cancelled',
             'changed_by' => 'admin', 'created_at' => current_time( 'mysql' ),
         ) );
-        $emails = new ERB_Emails();
-        $emails->send_cancellation( ERB_DB::get_booking( $id ) );
-        ERB_Helpers::json_success();
+        $emails = new EERB_Emails();
+        $emails->send_cancellation( EERB_DB::get_booking( $id ) );
+        EERB_Helpers::json_success();
     }
 
     // ─── AJAX: Blocked slots (admin calendar management) ─────────────────────
 
     public function ajax_block_slot() {
-        ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' );
-        if ( ! current_user_can( 'manage_options' ) ) ERB_Helpers::json_error( 'Unauthorised', 403 );
-        ERB_Helpers::json_success();
+        EERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'eerb_admin_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) EERB_Helpers::json_error( 'Unauthorised', 403 );
+        EERB_Helpers::json_success();
     }
     public function ajax_unblock_slot() {
-        ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' );
-        if ( ! current_user_can( 'manage_options' ) ) ERB_Helpers::json_error( 'Unauthorised', 403 );
-        ERB_Helpers::json_success();
+        EERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'eerb_admin_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) EERB_Helpers::json_error( 'Unauthorised', 403 );
+        EERB_Helpers::json_success();
     }
-    public function ajax_save_promo()        { ERB_Helpers::json_error( 'Pro feature.' ); }
-    public function ajax_delete_promo()      { ERB_Helpers::json_error( 'Pro feature.' ); }
-    public function ajax_save_gamekeeper()   { ERB_Helpers::json_error( 'Pro feature.' ); }
-    public function ajax_delete_gamekeeper() { ERB_Helpers::json_error( 'Pro feature.' ); }
+    public function ajax_save_promo()        { EERB_Helpers::json_error( 'Pro feature.' ); }
+    public function ajax_delete_promo()      { EERB_Helpers::json_error( 'Pro feature.' ); }
+    public function ajax_save_gamekeeper()   { EERB_Helpers::json_error( 'Pro feature.' ); }
+    public function ajax_delete_gamekeeper() { EERB_Helpers::json_error( 'Pro feature.' ); }
     public function ajax_get_bookings() {
-        ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' );
-        if ( ! current_user_can( 'manage_options' ) ) ERB_Helpers::json_error( 'Unauthorised', 403 );
-        ERB_Helpers::json_success( ERB_DB::get_bookings() );
+        EERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'eerb_admin_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) EERB_Helpers::json_error( 'Unauthorised', 403 );
+        EERB_Helpers::json_success( EERB_DB::get_bookings() );
     }
     public function ajax_update_booking() {
-        ERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'erb_admin_nonce' );
-        if ( ! current_user_can( 'manage_options' ) ) ERB_Helpers::json_error( 'Unauthorised', 403 );
-        ERB_Helpers::json_success();
+        EERB_Helpers::verify_nonce( $_POST['nonce'] ?? '', 'eerb_admin_nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) EERB_Helpers::json_error( 'Unauthorised', 403 );
+        EERB_Helpers::json_success();
     }
 }

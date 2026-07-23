@@ -5,21 +5,66 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Runs on plugin activation.
  * Creates all custom database tables and sets default options.
  */
-class ERB_Activator {
+class EERB_Activator {
 
     /**
      * Called on every plugin load when version changes.
      * Safe to run repeatedly — only updates values that need changing.
      */
     public static function upgrade() {
-        self::create_tables();       // dbDelta handles existing tables safely
+        self::migrate_from_erb();    // Rename tables/options from erb_ to eerb_
+        self::create_tables();       // Creates new tables only
         self::set_default_options(); // add_option skips if already set
         self::clear_bad_cached_urls();
         self::fix_date_format();
         flush_rewrite_rules();
     }
 
+    /**
+     * Migrate from old erb_ prefix to new eerb_ prefix.
+     * Safe to run multiple times — checks before renaming.
+     */
+    private static function migrate_from_erb() {
+        global $wpdb;
+
+        // Rename DB tables
+        $tables = array(
+            'rooms', 'games', 'game_hours', 'prices', 'bookings',
+            'customers', 'slot_holds', 'blocked_slots', 'booking_history',
+            'promo_codes', 'gamekeepers',
+        );
+        foreach ( $tables as $table ) {
+            $old_table = $wpdb->prefix . 'erb_' . $table;
+            $new_table = $wpdb->prefix . 'eerb_' . $table;
+            $old_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $old_table ) ) === $old_table;
+            $new_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $new_table ) ) === $new_table;
+            if ( $old_exists && ! $new_exists ) {
+                $wpdb->query( "RENAME TABLE `{$old_table}` TO `{$new_table}`" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            }
+        }
+
+        // Migrate WP options from erb_ to eerb_
+        $options = array(
+            'erb_version', 'erb_currency', 'erb_currency_symbol',
+            'erb_slot_hold_minutes', 'erb_slot_available_color', 'erb_slot_booked_color',
+            'erb_stripe_mode', 'erb_stripe_test_pk', 'erb_stripe_test_sk',
+            'erb_stripe_live_pk', 'erb_stripe_live_sk', 'erb_stripe_webhook_secret',
+            'erb_admin_email', 'erb_email_from_name', 'erb_email_from_address',
+            'erb_booking_page_url', 'erb_manage_page_url', 'erb_calendar_home_url',
+            'erb_date_format', 'erb_db_version',
+        );
+        foreach ( $options as $old_key ) {
+            $new_key = str_replace( 'erb_', 'eerb_', $old_key );
+            $value = get_option( $old_key, null );
+            if ( $value !== null && get_option( $new_key, null ) === null ) {
+                update_option( $new_key, $value );
+                delete_option( $old_key );
+            }
+        }
+    }
+
     public static function activate() {
+        self::migrate_from_erb();
         self::create_tables();
         self::set_default_options();
         self::clear_bad_cached_urls();
@@ -33,11 +78,11 @@ class ERB_Activator {
      * This runs on every activation/update so bad values are automatically corrected.
      */
     private static function fix_date_format() {
-        $current = get_option( 'erb_date_format', null );
+        $current = get_option( 'eerb_date_format', null );
 
         // Option has never been set at all — initialise to j F Y
         if ( $current === null || $current === false ) {
-            add_option( 'erb_date_format', 'j F Y' );
+            add_option( 'eerb_date_format', 'j F Y' );
             return;
         }
 
@@ -46,16 +91,16 @@ class ERB_Activator {
         // Formats we consider "not deliberately set by admin":
         $us_formats = array( 'F j, Y', 'n/j/Y', 'm/d/Y', 'n/j/y', 'm/d/y' );
         if ( in_array( $current, $us_formats, true ) ) {
-            update_option( 'erb_date_format', 'j F Y' );
+            update_option( 'eerb_date_format', 'j F Y' );
         }
         // If admin has set any other value (including d/m/Y, j F Y, etc.) — leave it alone
     }
 
     private static function clear_bad_cached_urls() {
-        $cached = get_option( 'erb_manage_page_url', '' );
+        $cached = get_option( 'eerb_manage_page_url', '' );
         $home   = trailingslashit( home_url( '/' ) );
         if ( $cached && trailingslashit( $cached ) === $home ) {
-            delete_option( 'erb_manage_page_url' );
+            delete_option( 'eerb_manage_page_url' );
         }
     }
 
@@ -67,7 +112,7 @@ class ERB_Activator {
         // ── rooms ─────────────────────────────────────────────────────────────
         // Physical rooms. Two games can share one room.
         $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}erb_rooms (
+            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}eerb_rooms (
             id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
             name          VARCHAR(100) NOT NULL,
             description   TEXT,
@@ -78,7 +123,7 @@ class ERB_Activator {
         // ── games ─────────────────────────────────────────────────────────────
         // Each escape room game. Linked to a physical room.
         $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}erb_games (
+            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}eerb_games (
             id                    INT UNSIGNED NOT NULL AUTO_INCREMENT,
             room_id               INT UNSIGNED NOT NULL,
             name                  VARCHAR(150) NOT NULL,
@@ -104,7 +149,7 @@ class ERB_Activator {
         // Operating hours per game per day of week.
         // day_of_week: 0=Sunday … 6=Saturday (matches PHP gmdate('w'))
         $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}erb_game_hours (
+            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}eerb_game_hours (
             id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
             game_id      INT UNSIGNED NOT NULL,
             day_of_week  TINYINT UNSIGNED NOT NULL COMMENT '0=Sun,1=Mon,...,6=Sat',
@@ -119,7 +164,7 @@ class ERB_Activator {
         // ── prices ────────────────────────────────────────────────────────────
         // Price per player count per game (allows per-game pricing in future).
         $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}erb_prices (
+            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}eerb_prices (
             id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
             game_id      INT UNSIGNED NOT NULL,
             player_count TINYINT UNSIGNED NOT NULL,
@@ -132,7 +177,7 @@ class ERB_Activator {
         // ── blocked_slots ─────────────────────────────────────────────────────
         // Admin-defined blocked timeslots (maintenance, private events, etc.)
         $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}erb_blocked_slots (
+            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}eerb_blocked_slots (
             id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
             game_id     INT UNSIGNED NOT NULL,
             slot_start  DATETIME NOT NULL,
@@ -148,7 +193,7 @@ class ERB_Activator {
         // ── customers ─────────────────────────────────────────────────────────
         // Plugin's own customer account system (separate from WP users).
         $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}erb_customers (
+            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}eerb_customers (
             id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
             first_name    VARCHAR(100) NOT NULL,
             last_name     VARCHAR(100) NOT NULL,
@@ -164,7 +209,7 @@ class ERB_Activator {
 
         // ── bookings ──────────────────────────────────────────────────────────
         $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}erb_bookings (
+            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}eerb_bookings (
             id                INT UNSIGNED NOT NULL AUTO_INCREMENT,
             booking_ref       VARCHAR(20) NOT NULL COMMENT 'Human-readable reference e.g. ERB-2024-00042',
             game_id           INT UNSIGNED NOT NULL,
@@ -194,7 +239,7 @@ class ERB_Activator {
         // ── booking_history ───────────────────────────────────────────────────
         // Audit trail of every change/cancellation.
         $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}erb_booking_history (
+            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}eerb_booking_history (
             id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
             booking_id     INT UNSIGNED NOT NULL,
             action         ENUM('created','changed','cancelled','refunded') NOT NULL,
@@ -212,7 +257,7 @@ class ERB_Activator {
         // ── slot_holds ────────────────────────────────────────────────────────
         // Server-side 15-minute hold while a visitor goes through checkout.
         $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}erb_slot_holds (
+            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}eerb_slot_holds (
             id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
             game_id     INT UNSIGNED NOT NULL,
             slot_start  DATETIME NOT NULL,
@@ -225,7 +270,7 @@ class ERB_Activator {
 
         // ── promo_codes ───────────────────────────────────────────────────────
         $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}erb_promo_codes (
+            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}eerb_promo_codes (
             id                  INT UNSIGNED NOT NULL AUTO_INCREMENT,
             code                VARCHAR(50) NOT NULL,
             description         VARCHAR(255),
@@ -243,7 +288,7 @@ class ERB_Activator {
         // ── gamekeepers ───────────────────────────────────────────────────────
         // Staff members who receive booking notification emails.
         $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}erb_gamekeepers (
+            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}eerb_gamekeepers (
             id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
             name       VARCHAR(150) NOT NULL,
             email      VARCHAR(255) NOT NULL,
@@ -254,31 +299,31 @@ class ERB_Activator {
         ) $charset;" );
 
         // Store the DB version for future migrations
-        update_option( 'erb_db_version', ERB_VERSION );
+        update_option( 'eerb_db_version', EERB_VERSION );
     }
 
     // ─── Default Options ──────────────────────────────────────────────────────
 
     private static function set_default_options() {
         $defaults = array(
-            'erb_currency'              => 'GBP',
-            'erb_currency_symbol'       => '£',
-            'erb_slot_hold_minutes'     => 15,
-            'erb_slot_available_color'  => '#22c55e',
-            'erb_slot_booked_color'     => '#ef4444',
-            'erb_stripe_mode'           => 'test',   // 'test' or 'live'
-            'erb_stripe_test_pk'        => '',
-            'erb_stripe_test_sk'        => '',
-            'erb_stripe_live_pk'        => '',
-            'erb_stripe_live_sk'        => '',
-            'erb_stripe_webhook_secret' => '',
-            'erb_admin_email'           => get_option( 'admin_email' ),
-            'erb_email_from_name'       => get_option( 'blogname' ),
-            'erb_email_from_address'    => get_option( 'admin_email' ),
-            'erb_booking_page_url'      => '',
-            'erb_manage_page_url'       => '',
-            'erb_calendar_home_url'     => '',
-            'erb_date_format'           => get_option( 'erb_date_format', 'j F Y' ),
+            'eerb_currency'              => 'GBP',
+            'eerb_currency_symbol'       => '£',
+            'eerb_slot_hold_minutes'     => 15,
+            'eerb_slot_available_color'  => '#22c55e',
+            'eerb_slot_booked_color'     => '#ef4444',
+            'eerb_stripe_mode'           => 'test',   // 'test' or 'live'
+            'eerb_stripe_test_pk'        => '',
+            'eerb_stripe_test_sk'        => '',
+            'eerb_stripe_live_pk'        => '',
+            'eerb_stripe_live_sk'        => '',
+            'eerb_stripe_webhook_secret' => '',
+            'eerb_admin_email'           => get_option( 'admin_email' ),
+            'eerb_email_from_name'       => get_option( 'blogname' ),
+            'eerb_email_from_address'    => get_option( 'admin_email' ),
+            'eerb_booking_page_url'      => '',
+            'eerb_manage_page_url'       => '',
+            'eerb_calendar_home_url'     => '',
+            'eerb_date_format'           => get_option( 'eerb_date_format', 'j F Y' ),
         );
 
         foreach ( $defaults as $key => $value ) {

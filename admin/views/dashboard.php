@@ -52,7 +52,7 @@ $from_dt = $from . ' 00:00:00';
 $to_dt   = $to   . ' 23:59:59';
 
 // ── Period stats ──────────────────────────────────────────────────────────────
-$period_bookings = ERB_DB::get_bookings( array(
+$period_bookings = EERB_DB::get_bookings( array(
     'date_from' => $from_dt,
     'date_to'   => $to_dt,
     'status'    => 'confirmed',
@@ -62,14 +62,14 @@ $period_players  = array_sum( array_column( $period_bookings, 'player_count' ) )
 $period_avg      = count( $period_bookings ) > 0 ? $period_revenue / count( $period_bookings ) : 0;
 
 // ── All time stats ────────────────────────────────────────────────────────────
-$total_bookings = ERB_DB::count_bookings( array( 'status' => 'confirmed' ) );
+$total_bookings = EERB_DB::count_bookings( array( 'status' => 'confirmed' ) );
 $total_revenue  = (int) $wpdb->get_var( $wpdb->prepare(
-    "SELECT SUM(total_pence) FROM {$wpdb->prefix}erb_bookings WHERE status = %s",
+    "SELECT SUM(total_pence) FROM {$wpdb->prefix}eerb_bookings WHERE status = %s",
     'confirmed'
 ) );
 
 // ── Today's bookings ──────────────────────────────────────────────────────────
-$bookings_today = ERB_DB::get_bookings( array(
+$bookings_today = EERB_DB::get_bookings( array(
     'date_from' => $today . ' 00:00:00',
     'date_to'   => $today . ' 23:59:59',
     'status'    => 'confirmed',
@@ -78,8 +78,8 @@ $bookings_today = ERB_DB::get_bookings( array(
 // ── Stale pending bookings ────────────────────────────────────────────────────
 $stale = $wpdb->get_results(
     "SELECT b.booking_ref, b.created_at, c.email
-     FROM {$wpdb->prefix}erb_bookings b
-     LEFT JOIN {$wpdb->prefix}erb_customers c ON c.id = b.customer_id
+     FROM {$wpdb->prefix}eerb_bookings b
+     LEFT JOIN {$wpdb->prefix}eerb_customers c ON c.id = b.customer_id
      WHERE b.status = 'pending'
      AND b.created_at < DATE_SUB(NOW(), INTERVAL 30 MINUTE)
      ORDER BY b.created_at DESC LIMIT 10"
@@ -94,7 +94,7 @@ for ( $i = 11; $i >= 0; $i-- ) {
     $m_to        = gmdate( 'Y-m-t',  $ts );
     $chart_labels[] = gmdate( 'M y', $ts );
     $rev         = (int) $wpdb->get_var( $wpdb->prepare(
-        "SELECT COALESCE(SUM(total_pence),0) FROM {$wpdb->prefix}erb_bookings
+        "SELECT COALESCE(SUM(total_pence),0) FROM {$wpdb->prefix}eerb_bookings
          WHERE status = 'confirmed' AND slot_start >= %s AND slot_start <= %s",
         $m_from . ' 00:00:00', $m_to . ' 23:59:59'
     ) );
@@ -111,7 +111,7 @@ $chart_max         = max( array_merge( $chart_values, [1] ) );
     <div class="erb-notice erb-notice--error">
         <strong><?php esc_html_e( 'Attention:', 'ettrick-escape-room-booking' ); ?></strong>
         <?php echo count( $stale ); ?> <?php esc_html_e( 'booking(s) are stuck in Pending — check your webhook settings.', 'ettrick-escape-room-booking' ); ?>
-        <a href="<?php echo esc_url( admin_url( 'admin.php?page=erb-settings' ) ); ?>"><?php esc_html_e( 'Settings →', 'ettrick-escape-room-booking' ); ?></a>
+        <a href="<?php echo esc_url( admin_url( 'admin.php?page=eerb-settings' ) ); ?>"><?php esc_html_e( 'Settings →', 'ettrick-escape-room-booking' ); ?></a>
         <ul style="margin:.5rem 0 0 1rem;font-size:.85rem;">
             <?php foreach ( $stale as $s ) : ?>
             <li><?php echo esc_html( $s->booking_ref ); ?> — <?php echo esc_html( $s->email ); ?> — <?php echo esc_html( $s->created_at ); ?></li>
@@ -123,7 +123,7 @@ $chart_max         = max( array_merge( $chart_values, [1] ) );
     <!-- Period selector -->
     <div class="erb-card" style="margin-bottom:1rem;">
         <form method="get" action="" style="display:flex;flex-wrap:wrap;gap:.75rem;align-items:flex-end;">
-            <input type="hidden" name="page" value="erb-dashboard">
+            <input type="hidden" name="page" value="eerb-dashboard">
             <div class="erb-form-group">
                 <label><?php esc_html_e( 'Period', 'ettrick-escape-room-booking' ); ?></label>
                 <select name="period" onchange="document.getElementById('erb-custom-range').style.display=this.value==='custom'?'flex':'none'">
@@ -165,7 +165,7 @@ $chart_max         = max( array_merge( $chart_values, [1] ) );
         </div>
         <div class="erb-stat-box">
             <div class="erb-stat-box__label" style="margin-bottom:.25rem;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;opacity:.7;"><?php echo esc_html( $label ); ?></div>
-            <div class="erb-stat-box__value"><?php echo esc_html( ERB_Helpers::format_price( $period_revenue ) ); ?></div>
+            <div class="erb-stat-box__value"><?php echo esc_html( EERB_Helpers::format_price( $period_revenue ) ); ?></div>
             <div class="erb-stat-box__label"><?php esc_html_e( 'Revenue', 'ettrick-escape-room-booking' ); ?></div>
         </div>
         <div class="erb-stat-box">
@@ -175,7 +175,7 @@ $chart_max         = max( array_merge( $chart_values, [1] ) );
         </div>
         <div class="erb-stat-box">
             <div class="erb-stat-box__label" style="margin-bottom:.25rem;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;opacity:.7;"><?php echo esc_html( $label ); ?></div>
-            <div class="erb-stat-box__value"><?php echo esc_html( ERB_Helpers::format_price( (int) $period_avg ) ); ?></div>
+            <div class="erb-stat-box__value"><?php echo esc_html( EERB_Helpers::format_price( (int) $period_avg ) ); ?></div>
             <div class="erb-stat-box__label"><?php esc_html_e( 'Avg Booking', 'ettrick-escape-room-booking' ); ?></div>
         </div>
     </div>
@@ -187,7 +187,7 @@ $chart_max         = max( array_merge( $chart_values, [1] ) );
             <div style="font-size:.8rem;color:#6b7280;margin-top:.25rem;"><?php esc_html_e( 'All Time Bookings', 'ettrick-escape-room-booking' ); ?></div>
         </div>
         <div class="erb-card" style="flex:1;min-width:160px;text-align:center;padding:1rem;">
-            <div style="font-size:1.5rem;font-weight:700;color:var(--erb-navy);"><?php echo esc_html( ERB_Helpers::format_price( (int) $total_revenue ) ); ?></div>
+            <div style="font-size:1.5rem;font-weight:700;color:var(--erb-navy);"><?php echo esc_html( EERB_Helpers::format_price( (int) $total_revenue ) ); ?></div>
             <div style="font-size:.8rem;color:#6b7280;margin-top:.25rem;"><?php esc_html_e( 'All Time Revenue', 'ettrick-escape-room-booking' ); ?></div>
         </div>
     </div>
@@ -277,7 +277,7 @@ $chart_max         = max( array_merge( $chart_values, [1] ) );
                     <td><?php echo esc_html( gmdate( 'H:i', strtotime( $b->slot_start ) ) ); ?></td>
                     <td><?php echo esc_html( $b->first_name . ' ' . $b->last_name ); ?></td>
                     <td><?php echo (int) $b->player_count; ?></td>
-                    <td><?php echo esc_html( ERB_Helpers::format_price( $b->total_pence ) ); ?></td>
+                    <td><?php echo esc_html( EERB_Helpers::format_price( $b->total_pence ) ); ?></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

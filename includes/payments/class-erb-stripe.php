@@ -5,13 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Stripe payment gateway integration.
  * Handles webhook signature verification and event processing.
  */
-class ERB_Stripe extends ERB_Payment_Gateway {
+class EERB_Stripe extends EERB_Payment_Gateway {
 
     private function secret_key() {
-        $mode = get_option( 'erb_stripe_mode', 'test' );
+        $mode = get_option( 'eerb_stripe_mode', 'test' );
         return $mode === 'live'
-            ? get_option( 'erb_stripe_live_sk', '' )
-            : get_option( 'erb_stripe_test_sk', '' );
+            ? get_option( 'eerb_stripe_live_sk', '' )
+            : get_option( 'eerb_stripe_test_sk', '' );
     }
 
     // ── Payment Intent ────────────────────────────────────────────────────────
@@ -82,7 +82,7 @@ class ERB_Stripe extends ERB_Payment_Gateway {
      * Returns WP_Error on failure.
      */
     public function handle_webhook( $payload, $signature ) {
-        $secret = get_option( 'erb_stripe_webhook_secret', '' );
+        $secret = get_option( 'eerb_stripe_webhook_secret', '' );
 
         if ( empty( $secret ) ) {
             return new WP_Error( 'no_secret', 'Webhook secret not configured.' );

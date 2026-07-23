@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Handles all email notifications.
  * Sends branded HTML + plain text emails to customers, admin, and gamekeepers.
  */
-class ERB_Emails {
+class EERB_Emails {
 
     // ── Public API ────────────────────────────────────────────────────────────
 
@@ -52,10 +52,10 @@ class ERB_Emails {
     private function customer_html( $booking, $type, $change_data = array() ) {
         $site       = get_bloginfo( 'name' );
         $site_url   = home_url();
-        $manage_url = ERB_Helpers::manage_booking_url( $booking->manage_token );
-        $date       = date_i18n( get_option( 'erb_date_format', 'j F Y' ), strtotime( $booking->slot_start ) );
+        $manage_url = EERB_Helpers::manage_booking_url( $booking->manage_token );
+        $date       = date_i18n( get_option( 'eerb_date_format', 'j F Y' ), strtotime( $booking->slot_start ) );
         $time       = date_i18n( 'H:i', strtotime( $booking->slot_start ) );
-        $total      = ERB_Helpers::format_price( $booking->total_pence );
+        $total      = EERB_Helpers::format_price( $booking->total_pence );
 
         switch ( $type ) {
             case 'confirmation':
@@ -102,9 +102,9 @@ class ERB_Emails {
         $financial_html = '';
         if ( false && $type === 'changed' && ! empty( $change_data['price_diff'] ) ) { // disabled in lite
             $diff      = (int) $change_data['price_diff'];
-            $diff_fmt  = ERB_Helpers::format_price( abs( $diff ) );
-            $old_fmt   = ERB_Helpers::format_price( $change_data['old_price'] );
-            $new_fmt   = ERB_Helpers::format_price( $change_data['new_price'] );
+            $diff_fmt  = EERB_Helpers::format_price( abs( $diff ) );
+            $old_fmt   = EERB_Helpers::format_price( $change_data['old_price'] );
+            $new_fmt   = EERB_Helpers::format_price( $change_data['new_price'] );
             $old_p     = (int) $change_data['old_players'];
             $new_p     = (int) $change_data['new_players'];
 
@@ -205,10 +205,10 @@ class ERB_Emails {
 
     private function customer_plain( $booking, $type, $change_data = array() ) {
         $site       = get_bloginfo( 'name' );
-        $date       = date_i18n( get_option( 'erb_date_format', 'j F Y' ), strtotime( $booking->slot_start ) );
+        $date       = date_i18n( get_option( 'eerb_date_format', 'j F Y' ), strtotime( $booking->slot_start ) );
         $time       = date_i18n( 'H:i', strtotime( $booking->slot_start ) );
-        $total      = ERB_Helpers::format_price( $booking->total_pence );
-        $manage_url = ERB_Helpers::manage_booking_url( $booking->manage_token );
+        $total      = EERB_Helpers::format_price( $booking->total_pence );
+        $manage_url = EERB_Helpers::manage_booking_url( $booking->manage_token );
 
         switch ( $type ) {
             case 'confirmation': $heading = 'BOOKING CONFIRMED'; $intro = 'Your escape room booking is confirmed. We can\'t wait to see you!'; break;
@@ -240,9 +240,9 @@ class ERB_Emails {
         // Financial notice for player count changes
         if ( $type === 'changed' && ! empty( $change_data['price_diff'] ) ) {
             $diff     = (int) $change_data['price_diff'];
-            $diff_fmt = ERB_Helpers::format_price( abs( $diff ) );
-            $old_fmt  = ERB_Helpers::format_price( $change_data['old_price'] );
-            $new_fmt  = ERB_Helpers::format_price( $change_data['new_price'] );
+            $diff_fmt = EERB_Helpers::format_price( abs( $diff ) );
+            $old_fmt  = EERB_Helpers::format_price( $change_data['old_price'] );
+            $new_fmt  = EERB_Helpers::format_price( $change_data['new_price'] );
             $lines[] = str_repeat( '-', 40 );
             if ( $diff < 0 ) {
                 $lines[] = 'REFUND DUE: ' . $diff_fmt;
@@ -297,10 +297,10 @@ class ERB_Emails {
 
     private function staff_recipients() {
         $recipients  = array();
-        $admin_email = get_option( 'erb_admin_email', get_option( 'admin_email' ) );
+        $admin_email = get_option( 'eerb_admin_email', get_option( 'admin_email' ) );
         if ( $admin_email ) $recipients[] = $admin_email;
 
-        foreach ( ERB_DB::get_gamekeepers( true ) as $gk ) {
+        foreach ( EERB_DB::get_gamekeepers( true ) as $gk ) {
             if ( ! in_array( $gk->email, $recipients ) ) {
                 $recipients[] = $gk->email;
             }
@@ -322,10 +322,10 @@ class ERB_Emails {
 
     private function staff_html( $booking, $type, $change_data = array() ) {
         $site      = get_bloginfo( 'name' );
-        $date      = date_i18n( get_option( 'erb_date_format', 'j F Y' ), strtotime( $booking->slot_start ) );
+        $date      = date_i18n( get_option( 'eerb_date_format', 'j F Y' ), strtotime( $booking->slot_start ) );
         $time      = date_i18n( 'H:i', strtotime( $booking->slot_start ) );
-        $total     = ERB_Helpers::format_price( $booking->total_pence );
-        $admin_url = admin_url( 'admin.php?page=erb-bookings' );
+        $total     = EERB_Helpers::format_price( $booking->total_pence );
+        $admin_url = admin_url( 'admin.php?page=eerb-bookings' );
 
         switch ( $type ) {
             case 'confirmation': $heading = 'New Booking Received'; $colour = '#16a34a'; break;
@@ -357,9 +357,9 @@ class ERB_Emails {
         $action_html = '';
         if ( $type === 'changed' && ! empty( $change_data['price_diff'] ) ) {
             $diff     = (int) $change_data['price_diff'];
-            $diff_fmt = ERB_Helpers::format_price( abs( $diff ) );
-            $old_fmt  = ERB_Helpers::format_price( $change_data['old_price'] );
-            $new_fmt  = ERB_Helpers::format_price( $change_data['new_price'] );
+            $diff_fmt = EERB_Helpers::format_price( abs( $diff ) );
+            $old_fmt  = EERB_Helpers::format_price( $change_data['old_price'] );
+            $new_fmt  = EERB_Helpers::format_price( $change_data['new_price'] );
             $old_p    = (int) $change_data['old_players'];
             $new_p    = (int) $change_data['new_players'];
             if ( $diff < 0 ) {
@@ -408,9 +408,9 @@ class ERB_Emails {
 
     private function staff_plain( $booking, $type, $change_data = array() ) {
         $site  = get_bloginfo( 'name' );
-        $date  = date_i18n( get_option( 'erb_date_format', 'j F Y' ), strtotime( $booking->slot_start ) );
+        $date  = date_i18n( get_option( 'eerb_date_format', 'j F Y' ), strtotime( $booking->slot_start ) );
         $time  = date_i18n( 'H:i', strtotime( $booking->slot_start ) );
-        $total = ERB_Helpers::format_price( $booking->total_pence );
+        $total = EERB_Helpers::format_price( $booking->total_pence );
 
         switch ( $type ) {
             case 'confirmation': $heading = 'NEW BOOKING';       break;
@@ -436,9 +436,9 @@ class ERB_Emails {
         );
         if ( $type === 'changed' && ! empty( $change_data['price_diff'] ) ) {
             $diff     = (int) $change_data['price_diff'];
-            $diff_fmt = ERB_Helpers::format_price( abs( $diff ) );
-            $old_fmt  = ERB_Helpers::format_price( $change_data['old_price'] );
-            $new_fmt  = ERB_Helpers::format_price( $change_data['new_price'] );
+            $diff_fmt = EERB_Helpers::format_price( abs( $diff ) );
+            $old_fmt  = EERB_Helpers::format_price( $change_data['old_price'] );
+            $new_fmt  = EERB_Helpers::format_price( $change_data['new_price'] );
             $lines[] = str_repeat( '=', 40 );
             if ( $diff < 0 ) {
                 $lines[] = 'ACTION REQUIRED: PROCESS REFUND OF ' . $diff_fmt;
@@ -452,15 +452,15 @@ class ERB_Emails {
             $lines[] = str_repeat( '=', 40 );
             $lines[] = '';
         }
-        $lines[] = 'View bookings: ' . admin_url( 'admin.php?page=erb-bookings' );
+        $lines[] = 'View bookings: ' . admin_url( 'admin.php?page=eerb-bookings' );
         return implode( "\r\n", $lines );
     }
 
     // ── Core send ─────────────────────────────────────────────────────────────
 
     private function send( $to, $subject, $html, $plain ) {
-        $from_name  = get_option( 'erb_email_from_name',    get_bloginfo( 'name' ) );
-        $from_email = get_option( 'erb_email_from_address', get_option( 'admin_email' ) );
+        $from_name  = get_option( 'eerb_email_from_name',    get_bloginfo( 'name' ) );
+        $from_email = get_option( 'eerb_email_from_address', get_option( 'admin_email' ) );
 
         // Use Content-Type header only - let wp_mail/PHPMailer handle
         // subject encoding and MIME structure to avoid double-encoding.

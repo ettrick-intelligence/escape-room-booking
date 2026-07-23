@@ -1,7 +1,7 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit;
-class ERB_Promo_Codes {
+class EERB_Promo_Codes {
     public function validate( $code ) {
-        $promo = ERB_DB::get_promo_code( strtoupper( trim( $code ) ) );
+        $promo = EERB_DB::get_promo_code( strtoupper( trim( $code ) ) );
         if ( ! $promo ) return array( 'valid' => false, 'message' => __( 'Invalid promo code.', 'ettrick-escape-room-booking' ) );
         $today = gmdate( 'Y-m-d' );
         if ( $promo->valid_from && $today < $promo->valid_from ) return array( 'valid' => false, 'message' => __( 'Promo code not yet active.', 'ettrick-escape-room-booking' ) );
@@ -9,5 +9,5 @@ class ERB_Promo_Codes {
         if ( $promo->max_uses   && $promo->use_count >= $promo->max_uses ) return array( 'valid' => false, 'message' => __( 'Promo code has reached its usage limit.', 'ettrick-escape-room-booking' ) );
         return array( 'valid' => true, 'discount_percent' => (int) $promo->discount_percent, 'promo_id' => $promo->id );
     }
-    public function apply( $promo_id ) { ERB_DB::increment_promo_use( $promo_id ); }
+    public function apply( $promo_id ) { EERB_DB::increment_promo_use( $promo_id ); }
 }

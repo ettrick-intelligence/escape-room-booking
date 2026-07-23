@@ -4,14 +4,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * Static utility helpers used across the plugin.
  */
-class ERB_Helpers {
+class EERB_Helpers {
 
     /**
      * Format a price in pence to a localised currency string.
      * e.g. 10500 → "£105.00"
      */
     public static function format_price( $pence ) {
-        $symbol = get_option( 'erb_currency_symbol', '£' );
+        $symbol = get_option( 'eerb_currency_symbol', '£' );
         return $symbol . number_format( $pence / 100, 2 );
     }
 
@@ -21,7 +21,7 @@ class ERB_Helpers {
     public static function generate_booking_ref() {
         global $wpdb;
         $year  = gmdate( 'Y' );
-        $table = $wpdb->prefix . 'erb_bookings';
+        $table = $wpdb->prefix . 'eerb_bookings';
         $last  = $wpdb->get_var( "SELECT MAX(id) FROM $table" );
         $seq   = str_pad( ( (int) $last ) + 1, 5, '0', STR_PAD_LEFT );
         return "ERB-{$year}-{$seq}";
@@ -92,20 +92,20 @@ class ERB_Helpers {
     public static function manage_booking_url( $token ) {
         // 1. Use the explicitly configured URL if set — but ignore it if it's
         //    just the home URL (means auto-discovery previously cached the wrong thing)
-        $base     = trim( get_option( 'erb_manage_page_url', '' ) );
+        $base     = trim( get_option( 'eerb_manage_page_url', '' ) );
         $home     = trailingslashit( home_url( '/' ) );
         if ( trailingslashit( $base ) === $home ) {
             $base = ''; // discard bad cached value
         }
 
-        // 2. Auto-discover the page containing [erb_manage_booking] shortcode
+        // 2. Auto-discover the page containing [eerb_manage_booking] shortcode
         if ( empty( $base ) ) {
             global $wpdb;
             $page_id = $wpdb->get_var(
                 "SELECT ID FROM {$wpdb->posts}
                  WHERE post_status = 'publish'
                    AND post_type = 'page'
-                   AND post_content LIKE '%erb_manage_booking%'
+                   AND post_content LIKE '%eerb_manage_booking%'
                  LIMIT 1"
             );
             if ( $page_id ) {
@@ -113,7 +113,7 @@ class ERB_Helpers {
                 // Only cache if it's a real page URL, not just the home URL
                 if ( $discovered && trailingslashit( $discovered ) !== $home ) {
                     $base = $discovered;
-                    update_option( 'erb_manage_page_url', $base );
+                    update_option( 'eerb_manage_page_url', $base );
                 }
             }
         }
@@ -124,7 +124,7 @@ class ERB_Helpers {
         }
 
         return add_query_arg( array(
-            'erb_action' => 'manage',
+            'eerb_action' => 'manage',
             'token'      => rawurlencode( $token ),
         ), trailingslashit( $base ) );
     }
@@ -134,22 +134,22 @@ class ERB_Helpers {
      * Uses the configured Calendar Home URL, auto-discovers a calendar page, or falls back to home.
      */
     public static function get_browse_url() {
-        $url = trim( get_option( 'erb_calendar_home_url', '' ) );
+        $url = trim( get_option( 'eerb_calendar_home_url', '' ) );
         if ( $url ) return $url;
 
-        // Auto-discover a page containing [erb_calendar]
+        // Auto-discover a page containing [eerb_calendar]
         global $wpdb;
         $page_id = $wpdb->get_var(
             "SELECT ID FROM {$wpdb->posts}
              WHERE post_status = 'publish'
                AND post_type   = 'page'
-               AND post_content LIKE '%erb_calendar%'
+               AND post_content LIKE '%eerb_calendar%'
              LIMIT 1"
         );
         if ( $page_id ) {
             $found = get_permalink( $page_id );
             if ( $found ) {
-                update_option( 'erb_calendar_home_url', $found );
+                update_option( 'eerb_calendar_home_url', $found );
                 return $found;
             }
         }
@@ -188,9 +188,9 @@ class ERB_Helpers {
         if ( ! session_id() ) {
             session_start();
         }
-        if ( empty( $_SESSION['erb_session_key'] ) ) {
-            $_SESSION['erb_session_key'] = self::generate_session_key();
+        if ( empty( $_SESSION['eerb_session_key'] ) ) {
+            $_SESSION['eerb_session_key'] = self::generate_session_key();
         }
-        return sanitize_text_field( $_SESSION['erb_session_key'] );
+        return sanitize_text_field( $_SESSION['eerb_session_key'] );
     }
 }

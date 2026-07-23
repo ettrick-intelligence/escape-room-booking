@@ -2,9 +2,9 @@
 Contributors: john_m_craig, cbsa
 Tags: escape room, booking, stripe, calendar, payments
 Requires at least: 6.0
-Tested up to: 7.0
+Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.1.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,7 +46,7 @@ A complete booking and payment system built specifically for escape room venues.
 
 1. Install and activate the plugin
 2. Add your Stripe API keys in Escape Rooms → Settings
-3. Create three pages: one with `[erb_calendar game="slug"]`, one with `[erb_booking]`, one with `[erb_manage_booking]`
+3. Create three pages: one with `[eerb_calendar game="slug"]`, one with `[eerb_booking]`, one with `[eerb_manage_booking]`
 4. Add your game in Escape Rooms → Games
 5. Start taking bookings
 
@@ -79,9 +79,9 @@ The free version supports up to 2 games. Upgrade to [Escape Room Booking Pro](ht
 = What shortcodes does the plugin use? =
 
 Three shortcodes:
-* `[erb_calendar game="your-game-slug"]` — the availability calendar
-* `[erb_booking]` — the booking and payment flow
-* `[erb_manage_booking]` — customer self-service page
+* `[eerb_calendar game="your-game-slug"]` — the availability calendar
+* `[eerb_booking]` — the booking and payment flow
+* `[eerb_manage_booking]` — customer self-service page
 
 = Does it work with my page builder? =
 
@@ -127,7 +127,7 @@ The free version contains links to https://escaperoombookingpro.com for upgrade 
 
 == Changelog ==
 
-= 1.2.0 =
+= 1.1.8 =
 * Updated tested up to WordPress 6.9
 * Removed unused core file include in activator
 

@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  */
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 // Reason: This class is the dedicated database layer. Caching is handled at the application level.
-class ERB_DB {
+class EERB_DB {
 
     private static $wpdb;
 
@@ -19,7 +19,7 @@ class ERB_DB {
     // ─── Table name helpers ───────────────────────────────────────────────────
 
     public static function table( $name ) {
-        return self::db()->prefix . 'erb_' . $name;
+        return self::db()->prefix . 'eerb_' . $name;
     }
 
     // ─── Games ────────────────────────────────────────────────────────────────
@@ -30,7 +30,7 @@ class ERB_DB {
      */
     public static function maybe_add_player_columns() {
         global $wpdb;
-        $table = $wpdb->prefix . 'erb_games';
+        $table = $wpdb->prefix . 'eerb_games';
         $cols  = $wpdb->get_col( "DESCRIBE {$table}", 0 );
         if ( ! in_array( 'min_players', $cols, true ) ) {
             $wpdb->query( "ALTER TABLE {$table} ADD COLUMN min_players TINYINT UNSIGNED NOT NULL DEFAULT 2 AFTER setup_minutes" );

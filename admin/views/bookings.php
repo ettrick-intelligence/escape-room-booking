@@ -20,8 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     if ( $date_from ) $args['date_from'] = $date_from . ' 00:00:00';
     if ( $date_to )   $args['date_to']   = $date_to   . ' 23:59:59';
 
-    $bookings = ERB_DB::get_bookings( $args );
-    $games    = ERB_DB::get_games( false );
+    $bookings = EERB_DB::get_bookings( $args );
+    $games    = EERB_DB::get_games( false );
 
     // Revenue total for current filter
     $total_revenue = array_sum( array_map( function( $b ) {
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     <!-- Filters -->
     <div class="erb-card" style="margin-bottom:1rem;">
         <form method="get" action="" style="display:flex;flex-wrap:wrap;gap:.75rem;align-items:flex-end;">
-            <input type="hidden" name="page" value="erb-bookings">
+            <input type="hidden" name="page" value="eerb-bookings">
             <div class="erb-form-group" style="min-width:180px;">
                 <label><?php esc_html_e( 'Search', 'ettrick-escape-room-booking' ); ?></label>
                 <input type="text" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="Ref, name or email…">
@@ -70,7 +70,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             <?php if ( $search || $status || $game_id || $date_from || $date_to ) : ?>
             <div class="erb-form-group" style="min-width:auto;">
                 <label>&nbsp;</label>
-                <a href="<?php echo esc_url( admin_url( 'admin.php?page=erb-bookings' ) ); ?>" class="erb-btn erb-btn--outline erb-btn--auto"><?php esc_html_e( 'Clear', 'ettrick-escape-room-booking' ); ?></a>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=eerb-bookings' ) ); ?>" class="erb-btn erb-btn--outline erb-btn--auto"><?php esc_html_e( 'Clear', 'ettrick-escape-room-booking' ); ?></a>
             </div>
             <?php endif; ?>
         </form>
@@ -84,7 +84,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             <?php if ( $total_revenue ) : ?>
             <span style="font-size:.85rem;font-weight:400;color:#6b7280;margin-left:.75rem;">
                 <?php esc_html_e( 'Confirmed revenue:', 'ettrick-escape-room-booking' ); ?>
-                <strong><?php echo esc_html( ERB_Helpers::format_price( $total_revenue ) ); ?></strong>
+                <strong><?php echo esc_html( EERB_Helpers::format_price( $total_revenue ) ); ?></strong>
             </span>
             <?php endif; ?>
         </h2>
@@ -105,7 +105,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             </tr></thead>
             <tbody>
             <?php foreach ( $bookings as $b ) :
-                $date = date_i18n( get_option( 'erb_date_format', 'j F Y' ), strtotime( $b->slot_start ) );
+                $date = date_i18n( get_option( 'eerb_date_format', 'j F Y' ), strtotime( $b->slot_start ) );
                 $time = date_i18n( 'g:i a', strtotime( $b->slot_start ) );
             ?>
                 <tr>
@@ -117,7 +117,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                         <small style="color:#6b7280;"><?php echo esc_html( $b->email ); ?></small>
                     </td>
                     <td style="text-align:center;"><?php echo (int) $b->player_count; ?></td>
-                    <td><?php echo esc_html( ERB_Helpers::format_price( $b->total_pence ) ); ?></td>
+                    <td><?php echo esc_html( EERB_Helpers::format_price( $b->total_pence ) ); ?></td>
                     <td>
                         <span class="erb-badge erb-badge--<?php echo esc_attr( $b->status ); ?>">
                             <?php echo esc_html( ucfirst( $b->status ) ); ?>
@@ -125,12 +125,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     </td>
                     <td style="white-space:nowrap;">
                         <button class="erb-btn erb-btn--outline erb-btn--sm"
-                                onclick="ERBBookings.viewBooking(<?php echo (int) $b->id; ?>)">
+                                onclick="EERBBookings.viewBooking(<?php echo (int) $b->id; ?>)">
                             <?php esc_html_e( 'View', 'ettrick-escape-room-booking' ); ?>
                         </button>
                         <?php if ( $b->status === 'confirmed' ) : ?>
                         <button class="erb-btn erb-btn--danger erb-btn--sm"
-                                onclick="ERBBookings.cancelBooking(<?php echo (int) $b->id; ?>, '<?php echo esc_js( $b->booking_ref ); ?>')">
+                                onclick="EERBBookings.cancelBooking(<?php echo (int) $b->id; ?>, '<?php echo esc_js( $b->booking_ref ); ?>')">
                             <?php esc_html_e( 'Cancel', 'ettrick-escape-room-booking' ); ?>
                         </button>
                         <?php endif; ?>
@@ -153,11 +153,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 </div>
 
 <?php
-wp_add_inline_script( 'erb-admin', '(function($){
-window.ERBBookings = {
+wp_add_inline_script( 'eerb-admin', '(function($){
+window.EERBBookings = {
     viewBooking: function(id) {
-        ERB.ajax("erb_admin_get_booking", { id: id }, function(b) {
-            var sym = (window.erbAdmin && erbAdmin.currencySymbol) ? erbAdmin.currencySymbol : "£";
+        ERB.ajax("eerb_admin_get_booking", { id: id }, function(b) {
+            var sym = (window.eerbAdmin && eerbAdmin.currencySymbol) ? eerbAdmin.currencySymbol : "£";
             var html = "<table style=\"width:100%;border-collapse:collapse;font-size:14px;\">";
             var rows = [
                 ["Reference",  "<code>" + b.booking_ref + "</code>"],
@@ -187,7 +187,7 @@ window.ERBBookings = {
     },
     cancelBooking: function(id, ref) {
         ERB.confirm("Cancel booking " + ref + "? This cannot be undone.", function() {
-            ERB.ajax("erb_admin_cancel_booking", { id: id }, function() {
+            ERB.ajax("eerb_admin_cancel_booking", { id: id }, function() {
                 ERB.notice("Booking " + ref + " cancelled.");
                 setTimeout(function() { location.reload(); }, 900);
             });

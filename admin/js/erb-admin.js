@@ -1,4 +1,4 @@
-/* global erbAdmin, jQuery */
+/* global eerbAdmin, jQuery */
 (function ($) {
     'use strict';
 
@@ -8,9 +8,9 @@
 
     ERB.ajax = function (action, data, onSuccess, onError) {
         return $.ajax({
-            url: erbAdmin.ajaxUrl,
+            url: eerbAdmin.ajaxUrl,
             method: 'POST',
-            data: Object.assign({ action: action, nonce: erbAdmin.nonce }, data),
+            data: Object.assign({ action: action, nonce: eerbAdmin.nonce }, data),
             success: function (res) {
                 if (res.success) {
                     if (onSuccess) onSuccess(res.data);
@@ -91,7 +91,7 @@
     // ── Utility: Format price (pence → display) ───────────────────────────────
 
     ERB.formatPrice = function (pence) {
-        var symbol = (typeof erbAdmin !== 'undefined' && erbAdmin.currencySymbol) ? erbAdmin.currencySymbol : '£';
+        var symbol = (typeof eerbAdmin !== 'undefined' && eerbAdmin.currencySymbol) ? eerbAdmin.currencySymbol : '£';
         return symbol + (pence / 100).toFixed(2);
     };
 
@@ -99,7 +99,7 @@
 
     $(function () {
         // Generic delete buttons wired up in later phases via data attributes
-        // e.g. <button class="erb-btn--danger erb-delete" data-action="erb_delete_game" data-id="5">Delete</button>
+        // e.g. <button class="erb-btn--danger erb-delete" data-action="eerb_delete_game" data-id="5">Delete</button>
         $(document).on('click', '.erb-delete', function () {
             var $btn   = $(this);
             var action = $btn.data('action');

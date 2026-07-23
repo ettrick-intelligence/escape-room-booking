@@ -1,4 +1,4 @@
-/* global ERB, erbPublic, Stripe, jQuery */
+/* global ERB, eerbPublic, Stripe, jQuery */
 (function ($) {
     'use strict';
 
@@ -6,7 +6,7 @@
 
         // ── State ─────────────────────────────────────────────────────────────
         state:        null,   // from sessionStorage
-        gameData:     null,   // from erbPublic.gamesData
+        gameData:     null,   // from eerbPublic.gamesData
         selectedPlayers: 0,
         pricePence:   0,
         discountPct:  0,
@@ -31,7 +31,7 @@
             }
 
             ERB.Booking.state    = state;
-            ERB.Booking.gameData = (erbPublic.gamesData && erbPublic.gamesData[parseInt(state.gameId, 10)]) || null;
+            ERB.Booking.gameData = (eerbPublic.gamesData && eerbPublic.gamesData[parseInt(state.gameId, 10)]) || null;
 
             // Resume existing hold or place a new one
             var holdExpires = state.holdExpires ? new Date(state.holdExpires) : null;
@@ -62,7 +62,7 @@
 
         holdSlot: function (onSuccess) {
             ERB.Booking.showPanel('loading');
-            ERB.ajax('erb_hold_slot', {
+            ERB.ajax('eerb_hold_slot', {
                 game_id:     ERB.Booking.state.gameId,
                 slot_start:  ERB.Booking.state.slotStart,
                 session_key: ERB.Booking.state.sessionKey,
@@ -80,7 +80,7 @@
         // ── Timer ─────────────────────────────────────────────────────────────
 
         startTimer: function () {
-            var mins = parseInt(erbPublic.holdMinutes, 10) || 15;
+            var mins = parseInt(eerbPublic.holdMinutes, 10) || 15;
             ERB.Booking.startTimerSeconds(mins * 60);
         },
 
@@ -96,7 +96,7 @@
 
         onTimerExpire: function () {
             // Release hold and send user back
-            ERB.ajax('erb_release_hold', {
+            ERB.ajax('eerb_release_hold', {
                 game_id:    ERB.Booking.state.gameId,
                 slot_start: ERB.Booking.state.slotStart,
                 session_key:ERB.Booking.state.sessionKey,
@@ -166,7 +166,7 @@
                 'Y': String(year),
                 'y': String(year).slice(-2)
             };
-            var fmt = (erbPublic && erbPublic.dateFormat) ? erbPublic.dateFormat : 'j F Y'; // default: 27 March 2026
+            var fmt = (eerbPublic && eerbPublic.dateFormat) ? eerbPublic.dateFormat : 'j F Y'; // default: 27 March 2026
             // Replace each PHP date token (preceded by optional backslash escape)
             return fmt.replace(/\\?([dDjlNSwzWFmMntLoYyaABgGhHisueIOPTZcrU])/g, function(match, token) {
                 if (match.charAt(0) === '\\') return token; // escaped character
@@ -229,7 +229,7 @@
 
             var $btn = $('#erb-login-btn').prop('disabled', true).text('Logging in…');
 
-            ERB.ajax('erb_customer_login', { email: email, password: password },
+            ERB.ajax('eerb_customer_login', { email: email, password: password },
             function (data) {
                 ERB.Booking.customerId   = data.customer_id;
                 ERB.Booking.customerName = data.first_name + ' ' + data.last_name;
@@ -294,7 +294,7 @@
 
             $('#erb-promo-result').text('Checking…').css('color', '#6b7280');
 
-            ERB.ajax('erb_validate_promo', { code: code },
+            ERB.ajax('eerb_validate_promo', { code: code },
             function (data) {
                 ERB.Booking.discountPct = data.discount_percent;
                 ERB.Booking.promoId     = data.promo_id;
@@ -316,7 +316,7 @@
             var discountAmt = Math.round(base * discount / 100);
             ERB.Booking.totalPence = base - discountAmt;
 
-            var sym = erbPublic.currencySymbol || '£';
+            var sym = eerbPublic.currencySymbol || '£';
             $('#erb-payment-total').text(ERB.formatPrice(ERB.Booking.totalPence));
             $('#erb-payment-per').text(ERB.formatPrice(Math.round(ERB.Booking.totalPence / ERB.Booking.selectedPlayers)) + ' per person');
 
@@ -336,7 +336,7 @@
         initStripe: function () {
             if (ERB.Booking.stripe) return; // already initialised
 
-            var pk = erbPublic.stripePublicKey || '';
+            var pk = eerbPublic.stripePublicKey || '';
             if (!pk) {
                 $('#erb-stripe-card-element').html('<p style="color:#ef4444;">Payment gateway not configured. Please contact us to complete your booking.</p>');
                 $('#erb-pay-btn').prop('disabled', true);
@@ -376,7 +376,7 @@
             // 1. Create booking record + payment intent on server
             var s = ERB.BookingState.get();
 
-            ERB.ajax('erb_create_booking', {
+            ERB.ajax('eerb_create_booking', {
                 game_id:      s.gameId,
                 slot_start:   s.slotStart,
                 slot_end:     s.slotEnd,
@@ -411,7 +411,7 @@
                         ERB.Booking.resetPayBtn();
                     } else if (result.paymentIntent.status === 'succeeded') {
                         // 3. Confirm with our server
-                        ERB.ajax('erb_confirm_payment', {
+                        ERB.ajax('eerb_confirm_payment', {
                             booking_id:        data.booking_id,
                             payment_intent_id: result.paymentIntent.id,
                         },

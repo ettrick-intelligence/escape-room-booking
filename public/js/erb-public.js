@@ -1,4 +1,4 @@
-/* global erbPublic, jQuery */
+/* global eerbPublic, jQuery */
 (function ($) {
     'use strict';
 
@@ -8,9 +8,9 @@
 
     ERB.ajax = function (action, data, onSuccess, onError) {
         return $.ajax({
-            url: erbPublic.ajaxUrl,
+            url: eerbPublic.ajaxUrl,
             method: 'POST',
-            data: Object.assign({ action: action, nonce: erbPublic.nonce }, data),
+            data: Object.assign({ action: action, nonce: eerbPublic.nonce }, data),
             success: function (res) {
                 if (res.success) {
                     if (onSuccess) onSuccess(res.data);
@@ -33,7 +33,7 @@
     // ── Price formatter ───────────────────────────────────────────────────────
 
     ERB.formatPrice = function (pence) {
-        var symbol = erbPublic.currencySymbol || '£';
+        var symbol = eerbPublic.currencySymbol || '£';
         return symbol + (pence / 100).toFixed(2);
     };
 
@@ -119,7 +119,7 @@
     // ── Booking state (persisted across steps in sessionStorage) ─────────────
 
     ERB.BookingState = {
-        _key: 'erb_booking',
+        _key: 'eerb_booking',
 
         get: function () {
             try { return JSON.parse(sessionStorage.getItem(this._key)) || {}; }

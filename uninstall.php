@@ -10,9 +10,9 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) exit;
 global $wpdb;
 
 $tables = array(
-    'erb_rooms', 'erb_games', 'erb_game_hours', 'erb_prices',
-    'erb_blocked_slots', 'erb_customers', 'erb_bookings',
-    'erb_booking_history', 'erb_slot_holds', 'erb_promo_codes', 'erb_gamekeepers',
+    'eerb_rooms', 'eerb_games', 'eerb_game_hours', 'eerb_prices',
+    'eerb_blocked_slots', 'eerb_customers', 'eerb_bookings',
+    'eerb_booking_history', 'eerb_slot_holds', 'eerb_promo_codes', 'eerb_gamekeepers',
 );
 
 foreach ( $tables as $table ) {
@@ -20,11 +20,11 @@ foreach ( $tables as $table ) {
 }
 
 $options = array(
-    'erb_db_version', 'erb_currency', 'erb_currency_symbol',
-    'erb_slot_hold_minutes', 'erb_slot_available_color', 'erb_slot_booked_color',
-    'erb_stripe_mode', 'erb_stripe_test_pk', 'erb_stripe_test_sk',
-    'erb_stripe_live_pk', 'erb_stripe_live_sk', 'erb_stripe_webhook_secret',
-    'erb_admin_email', 'erb_email_from_name', 'erb_email_from_address',
+    'eerb_db_version', 'eerb_currency', 'eerb_currency_symbol',
+    'eerb_slot_hold_minutes', 'eerb_slot_available_color', 'eerb_slot_booked_color',
+    'eerb_stripe_mode', 'eerb_stripe_test_pk', 'eerb_stripe_test_sk',
+    'eerb_stripe_live_pk', 'eerb_stripe_live_sk', 'eerb_stripe_webhook_secret',
+    'eerb_admin_email', 'eerb_email_from_name', 'eerb_email_from_address',
 );
 
 foreach ( $options as $option ) {

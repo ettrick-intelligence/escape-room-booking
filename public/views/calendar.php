@@ -2,14 +2,14 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 $slug = sanitize_title( $atts['game'] ?? '' );
-$game = $slug ? ERB_DB::get_game_by_slug( $slug ) : null;
+$game = $slug ? EERB_DB::get_game_by_slug( $slug ) : null;
 
 if ( ! $game ) {
     echo '<p class="erb-error">' . esc_html__( 'Game not found. Please check the shortcode slug.', 'ettrick-escape-room-booking' ) . '</p>';
     return;
 }
 
-$week_offset = (int) ( $_GET['erb_week'] ?? 0 );
+$week_offset = (int) ( $_GET['eerb_week'] ?? 0 );
 $week_start  = new DateTime( 'Monday this week' );
 if ( $week_offset !== 0 ) {
     $interval = new DateInterval( 'P' . abs( $week_offset ) . 'W' );
@@ -19,13 +19,13 @@ $week_end = ( clone $week_start )->modify( '+6 days' );
 
 $base_url  = strtok( ( is_ssl() ? 'https' : 'http' ) . '://' . sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) . sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ), '?' );
 $anchor    = '#erb-calendar-' . (int) $game->id;
-$prev_url  = add_query_arg( 'erb_week', $week_offset - 1, $base_url ) . $anchor;
-$next_url  = add_query_arg( 'erb_week', $week_offset + 1, $base_url ) . $anchor;
+$prev_url  = add_query_arg( 'eerb_week', $week_offset - 1, $base_url ) . $anchor;
+$next_url  = add_query_arg( 'eerb_week', $week_offset + 1, $base_url ) . $anchor;
 $today_url = $base_url . $anchor;
 
-$available_color = get_option( 'erb_slot_available_color', '#22c55e' );
-$booked_color    = get_option( 'erb_slot_booked_color',    '#ef4444' );
-$booking_page    = get_option( 'erb_booking_page_url', '' );
+$available_color = get_option( 'eerb_slot_available_color', '#22c55e' );
+$booked_color    = get_option( 'eerb_slot_booked_color',    '#ef4444' );
+$booking_page    = get_option( 'eerb_booking_page_url', '' );
 ?>
 <div class="erb-wrap">
 <div class="erb-calendar"
@@ -48,7 +48,7 @@ $booking_page    = get_option( 'erb_booking_page_url', '' );
             &#8592; <?php esc_html_e( 'Prev Week', 'ettrick-escape-room-booking' ); ?>
         </a>
         <span class="erb-calendar__nav-title">
-            <?php echo esc_html( date_i18n( get_option( 'erb_date_format', 'j F Y' ), $week_start->getTimestamp() ) . ' – ' . date_i18n( get_option( 'erb_date_format', 'j F Y' ), $week_end->getTimestamp() ) ); ?>
+            <?php echo esc_html( date_i18n( get_option( 'eerb_date_format', 'j F Y' ), $week_start->getTimestamp() ) . ' – ' . date_i18n( get_option( 'eerb_date_format', 'j F Y' ), $week_end->getTimestamp() ) ); ?>
             <?php if ( $week_offset !== 0 ) : ?>
                 &nbsp;<a href="<?php echo esc_url( $today_url ); ?>" class="erb-today-link"><?php esc_html_e( 'This week', 'ettrick-escape-room-booking' ); ?></a>
             <?php endif; ?>

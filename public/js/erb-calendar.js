@@ -1,4 +1,4 @@
-/* global ERB, erbPublic, jQuery */
+/* global ERB, eerbPublic, jQuery */
 (function ($) {
     'use strict';
 
@@ -41,7 +41,7 @@
             $gridWrap.hide();
             $error.hide().text('');
 
-            ERB.ajax('erb_get_slots', {
+            ERB.ajax('eerb_get_slots', {
                 game_id:    gameId,
                 week_start: inst.weekStart,
             }, function (data) {
@@ -201,7 +201,7 @@
             });
 
             // Navigate to the booking page
-            var url = inst.bookingUrl || erbPublic.bookingPageUrl || '';
+            var url = inst.bookingUrl || eerbPublic.bookingPageUrl || '';
             if (!url) {
                 alert('Booking page not configured. Please set the booking page URL in Escape Rooms → Settings.');
                 return;

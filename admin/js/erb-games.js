@@ -1,8 +1,8 @@
-/* global ERB, erbAdmin, jQuery */
+/* global ERB, eerbAdmin, jQuery */
 (function ($) {
     'use strict';
 
-    window.ERBGames = {
+    window.EERBGames = {
 
         // ── Room Modal ────────────────────────────────────────────────────────
 
@@ -18,7 +18,7 @@
             var name = $.trim($('#erb-room-name').val());
             if (!name) { alert('Room name is required.'); return; }
 
-            ERB.ajax('erb_save_room', {
+            ERB.ajax('eerb_save_room', {
                 id:          $('#erb-room-id').val(),
                 name:        name,
                 description: $('#erb-room-desc').val(),
@@ -48,7 +48,7 @@
 
             if (id) {
                 // Load existing game data
-                ERB.ajax('erb_get_game', { id: id }, function (game) {
+                ERB.ajax('eerb_get_game', { id: id }, function (game) {
                     $('#erb-game-name').val(game.name);
                     $('#erb-game-slug').val(game.slug);
                     $('#erb-game-room').val(game.room_id);
@@ -73,7 +73,7 @@
             if (!name) { alert('Game name is required.'); return; }
             if (!room) { alert('Please select a physical room.'); return; }
 
-            ERB.ajax('erb_save_game', {
+            ERB.ajax('eerb_save_game', {
                 id:                   $('#erb-game-id').val(),
                 name:                 name,
                 slug:                 $('#erb-game-slug').val() || name,
@@ -106,7 +106,7 @@
             $('.erb-hours-closed').prop('checked', false);
 
             // Load saved hours
-            ERB.ajax('erb_get_game', { id: gameId }, function (game) {
+            ERB.ajax('eerb_get_game', { id: gameId }, function (game) {
                 if (!game.hours || !game.hours.length) return;
                 game.hours.forEach(function (h) {
                     var day = h.day_of_week;
@@ -135,7 +135,7 @@
                 };
             });
 
-            ERB.ajax('erb_save_hours', { game_id: gameId, hours: hours }, function () {
+            ERB.ajax('eerb_save_hours', { game_id: gameId, hours: hours }, function () {
                 ERB.closeModal('erb-hours-modal');
                 ERB.notice('Hours saved.');
             });
@@ -152,11 +152,11 @@
             $('.erb-price-input').each(function () {
                 var p = $(this).data('players');
                 $(this).val(defaults[p] || '');
-                ERBGames.updatePerPerson(this);
+                EERBGames.updatePerPerson(this);
             });
 
             // Filter rows to min/max range
-            ERB.ajax('erb_get_game', { id: gameId }, function (game) {
+            ERB.ajax('eerb_get_game', { id: gameId }, function (game) {
                 var minP = parseInt(game.min_players, 10) || 2;
                 var maxP = parseInt(game.max_players, 10) || 8;
                 $('.erb-pricing-row').each(function () {
@@ -165,12 +165,12 @@
                 });
 
             // Load saved prices
-            ERB.ajax('erb_get_game', { id: gameId }, function (game) {
+            ERB.ajax('eerb_get_game', { id: gameId }, function (game) {
                 if (!game.prices || !game.prices.length) return;
                 game.prices.forEach(function (pr) {
                     var $input = $('.erb-price-input[data-players="' + pr.player_count + '"]');
                     $input.val((pr.price_pence / 100).toFixed(2));
-                    ERBGames.updatePerPerson($input[0]);
+                    EERBGames.updatePerPerson($input[0]);
                 });
             });
             });
@@ -184,7 +184,7 @@
             $('.erb-price-input').each(function () {
                 prices[$(this).data('players')] = $(this).val();
             });
-            ERB.ajax('erb_save_pricing', { game_id: gameId, prices: prices }, function (data) {
+            ERB.ajax('eerb_save_pricing', { game_id: gameId, prices: prices }, function (data) {
                 ERB.closeModal('erb-pricing-modal');
                 ERB.notice('Pricing saved.');
             }, function(err) {
@@ -197,7 +197,7 @@
             var players  = parseInt($input.data('players'), 10);
             var total    = parseFloat($input.val()) || 0;
             var perPerson = players > 0 ? (total / players).toFixed(2) : '0.00';
-            var symbol   = (window.erbAdmin && erbAdmin.currencySymbol) ? erbAdmin.currencySymbol : '£';
+            var symbol   = (window.eerbAdmin && eerbAdmin.currencySymbol) ? eerbAdmin.currencySymbol : '£';
             $('.erb-per-person-' + players).text(symbol + perPerson);
         },
 
@@ -226,6 +226,6 @@
         },
     };
 
-    $(function () { ERBGames.init(); });
+    $(function () { EERBGames.init(); });
 
 }(jQuery));
