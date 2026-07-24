@@ -8,6 +8,12 @@ use PHPUnit\Framework\TestCase;
 if ( ! defined( 'EERB_PLUGIN_DIR' ) ) {
     define( 'EERB_PLUGIN_DIR', dirname( __DIR__ ) . '/' );
 }
+if ( ! defined( 'EERB_LITE' ) ) {
+    define( 'EERB_LITE', true );
+}
+if ( ! defined( 'EERB_VERSION' ) ) {
+    define( 'EERB_VERSION', '1.3.0' );
+}
 
 class SlotHoldsTest extends TestCase {
 

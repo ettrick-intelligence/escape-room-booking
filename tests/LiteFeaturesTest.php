@@ -8,6 +8,9 @@ use PHPUnit\Framework\TestCase;
 if ( ! defined( 'EERB_PLUGIN_DIR' ) ) {
     define( 'EERB_PLUGIN_DIR', dirname( __DIR__ ) . '/' );
 }
+if ( ! defined( 'EERB_LITE' ) ) {
+    define( 'EERB_LITE', true );
+}
 
 class LiteFeaturesTest extends TestCase {
 
