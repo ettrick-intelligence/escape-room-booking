@@ -5,9 +5,11 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once EERB_PLUGIN_DIR . 'includes/class-erb-pagination.php';
-
 class PaginationTest extends TestCase {
+
+    public static function setUpBeforeClass(): void {
+        require_once EERB_PLUGIN_DIR . 'includes/class-erb-pagination.php';
+    }
 
     // ── Basic calculations ────────────────────────────────────────────────────
 
