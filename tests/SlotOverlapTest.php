@@ -5,10 +5,14 @@
 
 use PHPUnit\Framework\TestCase;
 
+if ( ! defined( 'EERB_PLUGIN_DIR' ) ) {
+    define( 'EERB_PLUGIN_DIR', dirname( __DIR__ ) . '/' );
+}
+
 class SlotOverlapTest extends TestCase {
 
     public function test_overlap_query_uses_interval_logic() {
-        $source = file_get_contents( ERB_PLUGIN_DIR . 'includes/class-erb-db.php' );
+        $source = file_get_contents( EERB_PLUGIN_DIR . 'includes/class-erb-db.php' );
         $this->assertStringContainsString( 'slot_start < %s', $source );
         $this->assertStringContainsString( 'slot_end > %s', $source );
     }
