@@ -5,6 +5,10 @@
 
 use PHPUnit\Framework\TestCase;
 
+if ( ! defined( 'EERB_PLUGIN_DIR' ) ) {
+    define( 'EERB_PLUGIN_DIR', dirname( __DIR__ ) . '/' );
+}
+
 class PaginationTest extends TestCase {
 
     public static function setUpBeforeClass(): void {
