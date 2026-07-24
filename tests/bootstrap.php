@@ -7,10 +7,10 @@ require_once dirname( __DIR__ ) . '/vendor/autoload.php';
 
 // WordPress constants
 if ( ! defined( 'ABSPATH' ) )       define( 'ABSPATH', '/tmp/wordpress/' );
-if ( ! defined( 'ERB_VERSION' ) )   define( 'ERB_VERSION', '1.1.4' );
-if ( ! defined( 'ERB_LITE' ) )      define( 'ERB_LITE', true );
-if ( ! defined( 'ERB_PLUGIN_DIR' ) ) define( 'ERB_PLUGIN_DIR', dirname( __DIR__ ) . '/' );
-if ( ! defined( 'ERB_PLUGIN_URL' ) ) define( 'ERB_PLUGIN_URL', 'https://example.com/wp-content/plugins/escape-room-booking/' );
+if ( ! defined( 'EERB_VERSION' ) )   define( 'EERB_VERSION', '1.1.4' );
+if ( ! defined( 'EERB_LITE' ) )      define( 'EERB_LITE', true );
+if ( ! defined( 'EERB_PLUGIN_DIR' ) ) define( 'EERB_PLUGIN_DIR', dirname( __DIR__ ) . '/' );
+if ( ! defined( 'EERB_PLUGIN_URL' ) ) define( 'EERB_PLUGIN_URL', 'https://example.com/wp-content/plugins/escape-room-booking/' );
 if ( ! defined( 'WP_DEBUG' ) )      define( 'WP_DEBUG', true );
 
 // Minimal $wpdb stub
@@ -32,10 +32,10 @@ $wpdb = new class {
 if ( ! function_exists( 'get_option' ) ) {
     function get_option( $key, $default = '' ) {
         $options = [
-            'erb_currency'          => 'GBP',
-            'erb_currency_symbol'   => '£',
-            'erb_date_format'       => 'j F Y',
-            'erb_slot_hold_minutes' => 15,
+            'eerb_currency'          => 'GBP',
+            'eerb_currency_symbol'   => '£',
+            'eerb_date_format'       => 'j F Y',
+            'eerb_slot_hold_minutes' => 15,
         ];
         return $options[ $key ] ?? $default;
     }
@@ -49,7 +49,7 @@ if ( ! function_exists( 'get_post_meta' ) )    { function get_post_meta( $i, $k,
 if ( ! function_exists( 'wp_remote_post' ) )   { function wp_remote_post( $u, $a = [] ) { return []; } }
 if ( ! function_exists( 'is_wp_error' ) )      { function is_wp_error( $t ) { return false; } }
 if ( ! function_exists( 'sanitize_text_field' ) ) { function sanitize_text_field( $v ) { return trim( strip_tags( $v ) ); } }
-if ( ! function_exists( 'wp_unslash' ) )       { function wp_unslash( $v ) { return is_array( $v ) ? array_map( 'stripslashes_deep', $v ) : stripslashes( $v ); } }
+if ( ! function_exists( 'wp_unslash' ) )       { function wp_unslash( $v ) { return is_array( $v ) ? array_map( 'stripslashes', $v ) : stripslashes( $v ); } }
 if ( ! function_exists( 'absint' ) )           { function absint( $v ) { return abs( (int) $v ); } }
 if ( ! function_exists( 'trailingslashit' ) )  { function trailingslashit( $v ) { return rtrim( $v, '/\\' ) . '/'; } }
 if ( ! function_exists( 'current_time' ) )     { function current_time( $type ) { return $type === 'timestamp' ? time() : gmdate( 'Y-m-d H:i:s' ); } }
